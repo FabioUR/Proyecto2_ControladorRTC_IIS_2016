@@ -123,12 +123,12 @@ module FSM_W_R(
 	
 	always @* begin
       if (est_act == est0) begin
-			a_d = 1'b1;
 			cs = 1'b1;
 			wr = 1'b1;
-			read_data = 1'b0;
-			send_data = 1'b0;
+			a_d = 1'b1;
 			send_add = 1'b0;
+			send_data = 1'b0;
+			read_data = 1'b0;
 			if (w_r) begin
 				rd = 1'bz;
 			end
@@ -137,12 +137,12 @@ module FSM_W_R(
 			end
 		end
       else if (est_act == est1) begin
-			a_d = 1'b0;
-			wr = 1'b1;
 			cs = 1'b1;
-			read_data = 1'b0;
+			wr = 1'b1;
+			a_d = 1'b0;
 			send_add = 1'b0;
 			send_data = 1'b0;
+			read_data = 1'b0;
 			if (w_r) begin
 				rd = 1'bz;
 			end
@@ -151,21 +151,21 @@ module FSM_W_R(
 			end
 		end
       else if (est_act == est2) begin
-			a_d = 1'b0;
 			cs = 1'b0;
-			wr = 1'b0;
 			rd = 1'b1;
-			read_data = 1'b0;
+			wr = 1'b0;
+			a_d = 1'b0;
 			send_add = 1'b1;
 			send_data = 1'b0;
+			read_data = 1'b0;
 		end
 		else if (est_act == est3) begin
 			cs = 1'b1;
 			wr = 1'b1;
 			a_d = 1'b0;
-			read_data = 1'b0;
 			send_add = 1'b1;
 			send_data = 1'b0;
+			read_data = 1'b0;
 			if (w_r) begin
 				rd = 1'bz;
 			end
@@ -174,12 +174,12 @@ module FSM_W_R(
 			end
 		end
 		else if (est_act == est4) begin
-			a_d = 1'b1;
 			cs = 1'b1;
 			wr = 1'b1;
-			read_data = 1'b0;
+			a_d = 1'b1;
 			send_add = 1'b0;
 			send_data = 1'b0;
+			read_data = 1'b0;
 			if (w_r) begin
 				rd = 1'bz;
 			end
@@ -188,10 +188,10 @@ module FSM_W_R(
 			end
 		end
 		else if (est_act == est5) begin
-			a_d = 1'b1;
 			cs = 1'b0;
-			read_data = 1'b0;
+			a_d = 1'b1;
 			send_add = 1'b0;
+			read_data = 1'b0;
 			if (w_r) begin
 				rd = 1'b1;
 				wr = 1'b0;
@@ -204,28 +204,28 @@ module FSM_W_R(
 			end
 		end
 		else if (est_act == est6) begin
-			a_d = 1'b1;
 			cs = 1'b1;
 			wr = 1'b1;
+			a_d = 1'b1;
 			send_add = 1'b0;
 			if (w_r) begin
 				rd = 1'bz;
-				read_data = 1'b0;
 				send_data = 1'b1;
+				read_data = 1'b0;
 			end
 			else begin
 				rd = 1'b1;
+				send_data = 1'b0;
 				read_data = 1'b1; // En este estado se puede leer el dato.
-					send_data = 1'b0;
 			end
 		end
 		else begin
-			a_d = 1'b1;
 			cs = 1'b1;
 			wr = 1'b1;
-			read_data = 1'b0;
+			a_d = 1'b1;
 			send_add = 1'b0;
 			send_data = 1'b0;
+			read_data = 1'b0;
 			if (w_r) begin
 				rd = 1'bz;
 			end
@@ -236,4 +236,5 @@ module FSM_W_R(
 	end
 	
 endmodule
+
 
