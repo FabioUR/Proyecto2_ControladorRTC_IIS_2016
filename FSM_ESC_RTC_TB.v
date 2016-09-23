@@ -4,15 +4,15 @@
 // Company: 
 // Engineer:
 //
-// Create Date:   01:35:30 09/23/2016
-// Design Name:   FSM_LEER_RTC
-// Module Name:   C:/Users/Edwin/Documents/ISE Projects/Proyecto 2 Lab. Digitales/FSM_LEER_RTC/FSM_LEER_RTC_TB.v
-// Project Name:  FSM_LEER_RTC
+// Create Date:   12:14:32 09/23/2016
+// Design Name:   FSM_ESC_RTC
+// Module Name:   C:/Users/Edwin/Documents/ISE Projects/Proyecto 2 Lab. Digitales/FSM_ESC_RTC/FSM_ESC_RTC_TB.v
+// Project Name:  FSM_ESC_RTC
 // Target Device:  
 // Tool versions:  
 // Description: 
 //
-// Verilog Test Fixture created by ISE for module: FSM_LEER_RTC
+// Verilog Test Fixture created by ISE for module: FSM_ESC_RTC
 //
 // Dependencies:
 // 
@@ -27,9 +27,9 @@ module FSM_ESC_RTC_TB;
 	// Inputs
 	reg clk;
 	reg reset;
-	reg do_it_escribir;
+	reg do_it_esc;
 
-// Outputs
+	// Outputs
 	wire a_d;
 	wire cs;
 	wire rd;
@@ -56,15 +56,15 @@ module FSM_ESC_RTC_TB;
 	FSM_ESC_RTC uut (
 		.clk(clk), 
 		.reset(reset), 
-		.do_it_escribir(do_it_escribir), 
+		.do_it_esc(do_it_esc), 
 		.a_d(a_d), 
 		.cs(cs), 
 		.rd(rd), 
 		.wr(wr), 
 		.rtc_to_ram(rtc_to_ram), 
 		.ram_to_rtc(ram_to_rtc), 
-		.dir_ram_seg(dir_ram_seg),
-		.dir_ram_com_cyt(dir_ram_com_cyt),		
+		.dir_ram_com_cyt(dir_ram_com_cyt), 
+		.dir_ram_seg(dir_ram_seg), 
 		.dir_ram_dir_seg(dir_ram_dir_seg), 
 		.dir_ram_min(dir_ram_min), 
 		.dir_ram_dir_min(dir_ram_dir_min), 
@@ -76,18 +76,17 @@ module FSM_ESC_RTC_TB;
 		.dir_ram_dir_mes(dir_ram_dir_mes), 
 		.dir_ram_anio(dir_ram_anio), 
 		.dir_ram_dir_anio(dir_ram_dir_anio), 
-		 
 		.w_ram_enable(w_ram_enable), 
 		.r_ram_enable(r_ram_enable)
 	);
-	
+
 	always #5 clk = !clk;
 	
 	initial begin
 		// Initialize Inputs
 		clk = 0;
 		reset = 1;
-		do_it_escribir = 1;
+		do_it_esc = 1;
 
 		// Wait 100 ns for global reset to finish
 		#100;
@@ -95,7 +94,7 @@ module FSM_ESC_RTC_TB;
 		// Add stimulus here
 		reset = 0;
 		#30;
-		do_it_escribir = 0;
+		do_it_esc = 0;
 		# 2500;
 		$stop;
 

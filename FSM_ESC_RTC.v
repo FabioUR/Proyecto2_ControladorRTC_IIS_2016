@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 module FSM_ESC_RTC(
    input wire clk, reset,
-	input wire do_it_escribir,
+	input wire do_it_esc,
 	
 	output wire a_d, cs, rd, wr, // Señales de ctrl RTC.
 	
@@ -103,14 +103,14 @@ module FSM_ESC_RTC(
 		est_sig = est0;
 		case(est_act)
 			est0: begin
-				if (do_it_escribir) begin
+				if (do_it_esc) begin
 					est_sig = est1;
 				end else begin
 					est_sig = est0;
 				end
 			end
 			est1: begin
-				if (Contador == 8'b11110110) begin // 34 ciclos x 7 lecturas.
+				if (Contador == 8'b11110110) begin // 34 ciclos x 7 escrituras.
 					est_sig = est0;
 				end
 				else begin
@@ -151,10 +151,10 @@ module FSM_ESC_RTC(
 			if (send_add && (~send_data) && (~read_data)) begin
 				rtc_to_ram = 0;
 				ram_to_rtc = 1;
-				w_ram_enable = 1;
-				r_ram_enable = 0;
+				w_ram_enable = 0;
+				r_ram_enable = 1;
 				if (Contador > 210) begin
-					dir_ram_dir_anio = 1;
+					dir_ram_dir_anio = 0;
 					dir_ram_anio = 0;
 					dir_ram_dir_mes = 0;
 					dir_ram_mes = 0;
@@ -166,11 +166,11 @@ module FSM_ESC_RTC(
 					dir_ram_min = 0;
 					dir_ram_dir_seg = 0;
 					dir_ram_seg = 0;
-					dir_ram_com_cyt = 0;
+					dir_ram_com_cyt = 1;
 				end else if (Contador > 175) begin
-					dir_ram_dir_mes = 1;
+					dir_ram_dir_mes = 0;
 					dir_ram_mes = 0;
-					dir_ram_dir_anio = 0;
+					dir_ram_dir_anio = 1;
 					dir_ram_anio = 0;
 					dir_ram_dir_dia = 0;
 					dir_ram_dia = 0;
@@ -182,11 +182,11 @@ module FSM_ESC_RTC(
 					dir_ram_seg = 0;
 					dir_ram_com_cyt = 0;
 				end else if (Contador > 140) begin
-					dir_ram_dir_dia = 1;
+					dir_ram_dir_dia = 0;
 					dir_ram_dia = 0;
 					dir_ram_dir_anio = 0;
 					dir_ram_anio = 0;
-					dir_ram_dir_mes = 0;
+					dir_ram_dir_mes = 1;
 					dir_ram_mes = 0;
 					dir_ram_dir_hora = 0;
 					dir_ram_hora = 0;
@@ -196,13 +196,13 @@ module FSM_ESC_RTC(
 					dir_ram_seg = 0;
 					dir_ram_com_cyt = 0;
 				end else if (Contador > 105) begin
-					dir_ram_dir_hora = 1;
+					dir_ram_dir_hora = 0;
 					dir_ram_hora = 0;
 					dir_ram_dir_anio = 0;
 					dir_ram_anio = 0;
 					dir_ram_dir_mes = 0;
 					dir_ram_mes = 0;
-					dir_ram_dir_dia = 0;
+					dir_ram_dir_dia = 1;
 					dir_ram_dia = 0;
 					dir_ram_dir_min = 0;
 					dir_ram_min = 0;
@@ -210,7 +210,7 @@ module FSM_ESC_RTC(
 					dir_ram_seg = 0;
 					dir_ram_com_cyt = 0;
 				end else if (Contador > 70) begin
-					dir_ram_dir_min = 1;
+					dir_ram_dir_min = 0;
 					dir_ram_min = 0;
 					dir_ram_dir_anio = 0;
 					dir_ram_anio = 0;
@@ -218,13 +218,13 @@ module FSM_ESC_RTC(
 					dir_ram_mes = 0;
 					dir_ram_dir_dia = 0;
 					dir_ram_dia = 0;
-					dir_ram_dir_hora = 0;
+					dir_ram_dir_hora = 1;
 					dir_ram_hora = 0;
 					dir_ram_dir_seg = 0;
 					dir_ram_seg = 0;
 					dir_ram_com_cyt = 0;
 				end else if (Contador > 35) begin
-					dir_ram_dir_seg = 1;
+					dir_ram_dir_seg = 0;
 					dir_ram_seg = 0;
 					dir_ram_dir_anio = 0;
 					dir_ram_anio = 0;
@@ -234,11 +234,11 @@ module FSM_ESC_RTC(
 					dir_ram_dia = 0;
 					dir_ram_dir_hora = 0;
 					dir_ram_hora = 0;
-					dir_ram_dir_min = 0;
+					dir_ram_dir_min = 1;
 					dir_ram_min = 0;
 					dir_ram_com_cyt = 0;
 				end else begin
-					dir_ram_com_cyt = 1;
+					dir_ram_com_cyt = 0;
 					dir_ram_dir_anio = 0;
 					dir_ram_anio = 0;
 					dir_ram_dir_mes = 0;
@@ -249,17 +249,17 @@ module FSM_ESC_RTC(
 					dir_ram_hora = 0;
 					dir_ram_dir_min = 0;
 					dir_ram_min = 0;
-					dir_ram_dir_seg = 0;
+					dir_ram_dir_seg = 1;
 					dir_ram_seg = 0;
 				end
 			end else if (send_data && (~send_add) && (~read_data)) begin
 				rtc_to_ram = 0;
 				ram_to_rtc = 1;
-				w_ram_enable = 1;
-				r_ram_enable = 0;
+				w_ram_enable = 0;
+				r_ram_enable = 1;
 				if (Contador > 210) begin
 					dir_ram_dir_anio = 0;
-					dir_ram_anio = 1;
+					dir_ram_anio = 0;
 					dir_ram_dir_mes = 0;
 					dir_ram_mes = 0;
 					dir_ram_dir_dia = 0;
@@ -270,12 +270,12 @@ module FSM_ESC_RTC(
 					dir_ram_min = 0;
 					dir_ram_dir_seg = 0;
 					dir_ram_seg = 0;
-					dir_ram_com_cyt = 0;
+					dir_ram_com_cyt = 1;
 				end else if (Contador > 175) begin
 					dir_ram_dir_mes = 0;
-					dir_ram_mes = 1;
+					dir_ram_mes = 0;
 					dir_ram_dir_anio = 0;
-					dir_ram_anio = 0;
+					dir_ram_anio = 1;
 					dir_ram_dir_dia = 0;
 					dir_ram_dia = 0;
 					dir_ram_dir_hora = 0;
@@ -287,11 +287,11 @@ module FSM_ESC_RTC(
 					dir_ram_com_cyt = 0;
 				end else if (Contador > 140) begin
 					dir_ram_dir_dia = 0;
-					dir_ram_dia = 1;
+					dir_ram_dia = 0;
 					dir_ram_dir_anio = 0;
 					dir_ram_anio = 0;
 					dir_ram_dir_mes = 0;
-					dir_ram_mes = 0;
+					dir_ram_mes = 1;
 					dir_ram_dir_hora = 0;
 					dir_ram_hora = 0;
 					dir_ram_dir_min = 0;
@@ -301,13 +301,13 @@ module FSM_ESC_RTC(
 					dir_ram_com_cyt = 0;
 				end else if (Contador >105) begin
 					dir_ram_dir_hora = 0;
-					dir_ram_hora = 1;
+					dir_ram_hora = 0;
 					dir_ram_dir_anio = 0;
 					dir_ram_anio = 0;
 					dir_ram_dir_mes = 0;
 					dir_ram_mes = 0;
 					dir_ram_dir_dia = 0;
-					dir_ram_dia = 0;
+					dir_ram_dia = 1;
 					dir_ram_dir_min = 0;
 					dir_ram_min = 0;
 					dir_ram_dir_seg = 0;
@@ -315,7 +315,7 @@ module FSM_ESC_RTC(
 					dir_ram_com_cyt = 0;
 				end else if (Contador > 70) begin
 					dir_ram_dir_min = 0;
-					dir_ram_min = 1;
+					dir_ram_min = 0;
 					dir_ram_dir_anio = 0;
 					dir_ram_anio = 0;
 					dir_ram_dir_mes = 0;
@@ -323,13 +323,13 @@ module FSM_ESC_RTC(
 					dir_ram_dir_dia = 0;
 					dir_ram_dia = 0;
 					dir_ram_dir_hora = 0;
-					dir_ram_hora = 0;
+					dir_ram_hora = 1;
 					dir_ram_dir_seg = 0;
 					dir_ram_seg = 0;
 					dir_ram_com_cyt = 0;
 				end else if (Contador > 35) begin
 					dir_ram_dir_seg = 0;
-					dir_ram_seg = 1;
+					dir_ram_seg = 0;
 					dir_ram_dir_anio = 0;
 					dir_ram_anio = 0;
 					dir_ram_dir_mes = 0;
@@ -339,10 +339,10 @@ module FSM_ESC_RTC(
 					dir_ram_dir_hora = 0;
 					dir_ram_hora = 0;
 					dir_ram_dir_min = 0;
-					dir_ram_min = 0;
+					dir_ram_min = 1;
 					dir_ram_com_cyt = 0;
 				end else begin
-					dir_ram_com_cyt = 1;
+					dir_ram_com_cyt = 0;
 					dir_ram_dir_anio = 0;
 					dir_ram_anio = 0;
 					dir_ram_dir_mes = 0;
@@ -354,7 +354,7 @@ module FSM_ESC_RTC(
 					dir_ram_dir_min = 0;
 					dir_ram_min = 0;
 					dir_ram_dir_seg = 0;
-					dir_ram_seg = 0;
+					dir_ram_seg = 1;
 				end
 			end else begin
 				w_ram_enable = 0;
