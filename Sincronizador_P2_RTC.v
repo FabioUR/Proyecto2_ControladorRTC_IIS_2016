@@ -19,18 +19,22 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module Sincronizador_P2(
-    input wire CLK, RESET,
-	output wire sincro_horiz, sincro_vert, video_on, p_tick,
+   input wire CLK, RESET,
+	output wire sincro_horiz, sincro_vert, p_tick,
 	output wire [9:0] pixel_X, pixel_Y
     );
 	
 	//declaración de constantes
 	//parametros de sincronización del controlador VGA 640x480
 	//dichos valores o parametros salen de las graficas
+	
+	//dimensiones horizontales
 	localparam HM = 640   ; //area de muestro horizontal
 	localparam H_izq = 48 ; //borde izquierdo horizontal
 	localparam H_der = 16 ; //borde derecho horizontal
 	localparam H_retraz=96; //retrazo horizontal
+	
+	//dimensiones verticales
 	localparam VM = 480   ; //area de muestro vertical
 	localparam V_sup = 10 ; //borde superior vertical
 	localparam V_inf = 33 ; //borde inferior vertical
@@ -118,9 +122,6 @@ always @ (posedge CLK) begin
 // Se toma en cuenta la parte de retrazo, de 490 a 491
 // Asignando un valor booleano a sincr_vert_siguiente
 	assign sincr_vert_siguiente = ((cont_vert_regist >= (VM+V_sup)) && (cont_vert_regist <= (VM+V_sup+V_retraz-1)));
-	
-// Video_on ON/OFF
-	assign video_on = ((cont_horiz_regist < HM) && (cont_vert_regist < VM));
 	
 //Señales de salida, las cuales van al generador de pixeles
 	assign sincro_horiz = ~sincr_horiz_reg;
