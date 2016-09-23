@@ -110,7 +110,7 @@ module FSM_LEER_RTC(
 				end
 			end
 			est1: begin
-				if (Contador == 8'b11101110) begin // 34 ciclos x 7 lecturas.
+				if (Contador == 8'b11110110) begin // 34 ciclos x 7 lecturas.
 					est_sig = est0;
 				end
 				else begin
@@ -153,7 +153,7 @@ module FSM_LEER_RTC(
 				ram_to_rtc = 1;
 				w_ram_enable = 0;
 				r_ram_enable = 1;
-				if (Contador > 204) begin
+				if (Contador > 210) begin
 					dir_ram_dir_anio = 1;
 					dir_ram_anio = 0;
 					dir_ram_dir_mes = 0;
@@ -167,7 +167,7 @@ module FSM_LEER_RTC(
 					dir_ram_dir_seg = 0;
 					dir_ram_seg = 0;
 					dir_ram_com_cyt = 0;
-				end else if (Contador > 170) begin
+				end else if (Contador > 175) begin
 					dir_ram_dir_mes = 1;
 					dir_ram_mes = 0;
 					dir_ram_dir_anio = 0;
@@ -181,7 +181,7 @@ module FSM_LEER_RTC(
 					dir_ram_dir_seg = 0;
 					dir_ram_seg = 0;
 					dir_ram_com_cyt = 0;
-				end else if (Contador > 136) begin
+				end else if (Contador > 140) begin
 					dir_ram_dir_dia = 1;
 					dir_ram_dia = 0;
 					dir_ram_dir_anio = 0;
@@ -195,7 +195,7 @@ module FSM_LEER_RTC(
 					dir_ram_dir_seg = 0;
 					dir_ram_seg = 0;
 					dir_ram_com_cyt = 0;
-				end else if (Contador >102) begin
+				end else if (Contador > 105) begin
 					dir_ram_dir_hora = 1;
 					dir_ram_hora = 0;
 					dir_ram_dir_anio = 0;
@@ -209,7 +209,7 @@ module FSM_LEER_RTC(
 					dir_ram_dir_seg = 0;
 					dir_ram_seg = 0;
 					dir_ram_com_cyt = 0;
-				end else if (Contador > 68) begin
+				end else if (Contador > 70) begin
 					dir_ram_dir_min = 1;
 					dir_ram_min = 0;
 					dir_ram_dir_anio = 0;
@@ -223,7 +223,7 @@ module FSM_LEER_RTC(
 					dir_ram_dir_seg = 0;
 					dir_ram_seg = 0;
 					dir_ram_com_cyt = 0;
-				end else if (Contador > 34) begin
+				end else if (Contador > 35) begin
 					dir_ram_dir_seg = 1;
 					dir_ram_seg = 0;
 					dir_ram_dir_anio = 0;
@@ -257,7 +257,7 @@ module FSM_LEER_RTC(
 				ram_to_rtc = 0;
 				w_ram_enable = 1;
 				r_ram_enable = 0;
-				if (Contador > 204) begin
+				if (Contador > 210) begin
 					dir_ram_dir_anio = 0;
 					dir_ram_anio = 1;
 					dir_ram_dir_mes = 0;
@@ -271,7 +271,7 @@ module FSM_LEER_RTC(
 					dir_ram_dir_seg = 0;
 					dir_ram_seg = 0;
 					dir_ram_com_cyt = 0;
-				end else if (Contador > 170) begin
+				end else if (Contador > 175) begin
 					dir_ram_dir_mes = 0;
 					dir_ram_mes = 1;
 					dir_ram_dir_anio = 0;
@@ -285,7 +285,7 @@ module FSM_LEER_RTC(
 					dir_ram_dir_seg = 0;
 					dir_ram_seg = 0;
 					dir_ram_com_cyt = 0;
-				end else if (Contador > 136) begin
+				end else if (Contador > 140) begin
 					dir_ram_dir_dia = 0;
 					dir_ram_dia = 1;
 					dir_ram_dir_anio = 0;
@@ -299,7 +299,7 @@ module FSM_LEER_RTC(
 					dir_ram_dir_seg = 0;
 					dir_ram_seg = 0;
 					dir_ram_com_cyt = 0;
-				end else if (Contador >102) begin
+				end else if (Contador >105) begin
 					dir_ram_dir_hora = 0;
 					dir_ram_hora = 1;
 					dir_ram_dir_anio = 0;
@@ -313,7 +313,7 @@ module FSM_LEER_RTC(
 					dir_ram_dir_seg = 0;
 					dir_ram_seg = 0;
 					dir_ram_com_cyt = 0;
-				end else if (Contador > 68) begin
+				end else if (Contador > 70) begin
 					dir_ram_dir_min = 0;
 					dir_ram_min = 1;
 					dir_ram_dir_anio = 0;
@@ -327,7 +327,7 @@ module FSM_LEER_RTC(
 					dir_ram_dir_seg = 0;
 					dir_ram_seg = 0;
 					dir_ram_com_cyt = 0;
-				end else if (Contador > 34) begin
+				end else if (Contador > 35) begin
 					dir_ram_dir_seg = 0;
 					dir_ram_seg = 1;
 					dir_ram_dir_anio = 0;
