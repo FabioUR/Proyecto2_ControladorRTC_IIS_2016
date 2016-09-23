@@ -95,7 +95,7 @@ module FSM_LEER_RTC_TB;
 		reset = 0;
 		#30;
 		do_it_leer = 0;
-		# 2350;
+		# 2500;
 		$stop;
 
 	end
