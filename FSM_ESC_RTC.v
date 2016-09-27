@@ -84,7 +84,9 @@ module FSM_ESC_RTC(
 	begin
 		if (reset) begin
 			est_act <= est0;
-		end else	begin
+		end else	if (Contador > 245) begin
+			est_act <= est0;
+		end else begin
 			est_act <= est_sig;
 		end
 	end
@@ -110,12 +112,7 @@ module FSM_ESC_RTC(
 				end
 			end
 			est1: begin
-				if (Contador == 8'b11110110) begin // 34 ciclos x 7 escrituras.
-					est_sig = est0;
-				end
-				else begin
-					est_sig = est1;
-				end
+				est_sig = est1;
 			end
 			default: est_sig = est0;
 		endcase

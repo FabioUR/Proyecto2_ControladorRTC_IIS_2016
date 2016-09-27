@@ -31,7 +31,7 @@ module FSM_INIC_RAM_TB;
 
 	// Outputs
 	wire rom_to_ram;
-	wire [16:0] dir_rom;
+	wire [17:0] dir_rom;
 	wire rom_enable;
 	wire [31:0] dir_ram;
 	wire w_ram_enable;
