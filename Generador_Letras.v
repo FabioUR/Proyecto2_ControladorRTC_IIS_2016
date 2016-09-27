@@ -1,11 +1,12 @@
+`timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: ITCR
-// Engineer: Fabio UreÃ±a Rojas
+// Company: 
+// Engineer: 		Fabio Ureña Rojas
 // 
 // Create Date:    12:55:16 09/21/2016 
 // Design Name: 
 // Module Name:    Generador_Letras 
-// Project Name:   Controlador_VGA_RTC.
+// Project Name: 
 // Target Devices: 
 // Tool versions: 
 // Description: 
@@ -14,24 +15,24 @@
 //
 // Revision: 
 // Revision 0.01 - File Created
-// Additional Comments:
+// Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
 module Generador_Letras(
-	//ENTRADAS
+   //ENTRADAS
 	input wire CLK,
 	input wire RESET,
 	//input wire [3:0] digitDec_DD, digitUni_DD, digitDec_M, digitUni_M, digitDec_AN, digitUni_AN,
 	//digitDec_HORA, digitUni_HORA, digitDec_MIN, digitUni_MIN, digitDec_SEG, digitUni_SEG,
 	//digitDec_TimerHORA, digitUni_TimerHORA, digitDec_TimerMIN, digitUni_TimerMIN, digitDec_TimerSEG, digitUni_TimerSEG,
-	input wire [9:0] pix_x, pix_y, // Coordenadas del escÃ¡ner del VGA.
+	input wire [9:0] pix_x, pix_y, // Coordenadas del escáner del VGA.
 	//input wire [2:0] ctrl_rgb, // Switches del usuario para elegir color.
 	
 	//SALIDAS
 	output reg [2:0] graph_rgb // Salida para controlar color en VGA.
    );
 	
-	// DeclaraciÃ³n de seÃ±ales, base. Para el momento de impresion
+	// Declaración de señales, base. Para el momento de impresion
    wire [10:0] rom_addr;
    reg [6:0] char_addr;
    reg [3:0] row_addr;
@@ -39,7 +40,7 @@ module Generador_Letras(
    wire [7:0] font_word;
    wire font_bit;
 	
-	//DeclaraciÃ³n de seÃ±ales de variables a mostrar
+	//Declaración de señales de variables a mostrar
 	reg [6:0] char_addr_FECHA, char_addr_NumFECHA, char_addr_HORA, char_addr_NumHORA, char_addr_ForMili, char_addr_TIMER, char_addr_NumTIMER, char_addr_SIMBOLO;
 	wire [3:0] row_addr_FECHA, row_addr_NumFECHA, row_addr_HORA, row_addr_NumHORA, row_addr_ForMili, row_addr_TIMER, row_addr_NumTIMER, row_addr_SIMBOLO; //fila (y)
    wire [2:0] bit_addr_FECHA, bit_addr_NumFECHA, bit_addr_HORA, bit_addr_NumHORA, bit_addr_ForMili, bit_addr_TIMER, bit_addr_NumTIMER, bit_addr_SIMBOLO; //bit (x)
@@ -50,9 +51,9 @@ module Generador_Letras(
       (.clk(CLK), .addr(rom_addr), .data(font_word));
 	
 	//1. Definir el espacio y las letras correspondientes a la palabra FECHA 16x32
-	assign FECHA_on = ((pix_y[9:5]==1) && (pix_x[9:4]>=18) && (pix_x[9:4]<=22)); //Me difine el tamaÃ±o y=2^5 y x=2^5
-	assign row_addr_FECHA = pix_y[4:1]; //me define el tamaÃ±o de la letra
-	assign bit_addr_FECHA = pix_x[4:1]; //me define el tamaÃ±o de la letra
+	assign FECHA_on = ((pix_y[9:5]==1) && (pix_x[9:4]>=18) && (pix_x[9:4]<=22)); //Me difine el tamaño y=2^5 y x=2^5
+	assign row_addr_FECHA = pix_y[4:1]; //me define el tamaño de la letra
+	assign bit_addr_FECHA = pix_x[4:1]; //me define el tamaño de la letra
 	
 	always @(posedge CLK, posedge RESET) begin
 			if(RESET)
@@ -78,8 +79,8 @@ module Generador_Letras(
 
 	//2. Mostrar digitos de la fecha 64x32
 	assign NumFECHA_on = (pix_y[9:5]<=3) && (pix_y[9:5]>=2) && (pix_x[9:6]>=3) && (pix_x[9:6]<=6); //coordenadas donde se pintara los digitos
-	assign row_addr_NumFECHA = pix_y[5:2]; //tamaÃ±o de la letra 
-	assign bit_addr_NumFECHA = pix_x[4:2]; //tamaÃ±o de la letra
+	assign row_addr_NumFECHA = pix_y[5:2]; //tamaño de la letra 
+	assign bit_addr_NumFECHA = pix_x[4:2]; //tamaño de la letra
 
 	always@*
 	begin
@@ -90,16 +91,16 @@ module Generador_Letras(
 			3'h1: char_addr_NumFECHA = 7'h32;/*{3'b011, digitDec_M};//(decenas Mes)*/
 			3'h2: char_addr_NumFECHA = 7'h33;/*{3'b011, digitUni_M};//(unidades mes)*/
 			3'h3: char_addr_NumFECHA = 7'h2f;// /
-			3'h4: char_addr_NumFECHA = 7'h34;/*{3'b011, digitDec_AN};//(unidad de millar aÃ±o)*/
-			3'h5: char_addr_NumFECHA = 7'h35;/*{3'b011, digitUni_AN};//(Centenas aÃ±o)*/
+			3'h4: char_addr_NumFECHA = 7'h34;/*{3'b011, digitDec_AN};//(unidad de millar año)*/
+			3'h5: char_addr_NumFECHA = 7'h35;/*{3'b011, digitUni_AN};//(Centenas año)*/
 			default: char_addr_NumFECHA = 7'h00;//Espacio en blanco
 		endcase	
 	end
 	
 	//3. Mostrar Palabra HORA
-	assign HORA_on = ((pix_y[9:5]==6) && (pix_x[9:5]>=2) && (pix_x[9:5]<=3)); //Me difine el tamaÃ±o y=2^5 y x=2^5
-	assign row_addr_HORA = pix_y[5:1]; //me define el tamaÃ±o de la letra
-	assign bit_addr_HORA = pix_x[4:1]; //me define el tamaÃ±o de la letra
+	assign HORA_on = ((pix_y[9:5]==6) && (pix_x[9:5]>=2) && (pix_x[9:5]<=3)); //Me difine el tamaño y=2^5 y x=2^5
+	assign row_addr_HORA = pix_y[5:1]; //me define el tamaño de la letra
+	assign bit_addr_HORA = pix_x[4:1]; //me define el tamaño de la letra
 	
 	always @* 
 	begin
@@ -117,9 +118,9 @@ module Generador_Letras(
 	//4. Mostrar Palabra AM/PM
 	//Crear posteriormente con una variable AM/PM, para seleccionar si se esta en AM/PM, usandolo un case,
 	//en este caso, posiblemente con un switch
-	assign ForMili_on = ((pix_y[9:5]==7) && (pix_x[9:5]>=9) && (pix_x[9:5]<=10)); //Me difine el tamaÃ±o y=2^5 y x=2^5
-	assign row_addr_ForMili = pix_y[5:1]; //me define el tamaÃ±o de la letra
-	assign bit_addr_ForMili = pix_x[4:1]; //me define el tamaÃ±o de la letra
+	assign ForMili_on = ((pix_y[9:5]==7) && (pix_x[9:5]>=9) && (pix_x[9:5]<=10)); //Me difine el tamaño y=2^5 y x=2^5
+	assign row_addr_ForMili = pix_y[5:1]; //me define el tamaño de la letra
+	assign bit_addr_ForMili = pix_x[4:1]; //me define el tamaño de la letra
 	
 	always @* 
 	begin
@@ -148,16 +149,16 @@ module Generador_Letras(
 			3'h3: char_addr_NumHORA = 7'h32;/*{3'b011, digitDec_MIN};//(decenas Mes)*/
 			3'h4: char_addr_NumHORA = 7'h33;/*{3'b011, digitUni_MIN};//(unidades mes)*/
 			3'h5: char_addr_NumHORA = 7'h3a;// /
-			3'h6: char_addr_NumHORA = 7'h34;/*{3'b011, digitDec_SEG};//(unidad de millar aÃ±o)*/
-			3'h7: char_addr_NumHORA = 7'h35;/*{3'b011, digitUni_SEG};//(Centenas aÃ±o)*/
+			3'h6: char_addr_NumHORA = 7'h34;/*{3'b011, digitDec_SEG};//(unidad de millar año)*/
+			3'h7: char_addr_NumHORA = 7'h35;/*{3'b011, digitUni_SEG};//(Centenas año)*/
 			default: char_addr_NumHORA = 7'h00;//Espacio en blanco
 		endcase	
 	end
 	
 	//6. Mostrar Palabra TIMER
-	assign TIMER_on = ((pix_y[9:5]==10) && (pix_x[9:5]>=2) && (pix_x[9:5]<=4)); //Me difine el tamaÃ±o y=2^5 y x=2^5
-	assign row_addr_TIMER = pix_y[5:1]; //me define el tamaÃ±o de la letra
-	assign bit_addr_TIMER = pix_x[4:1]; //me define el tamaÃ±o de la letra
+	assign TIMER_on = ((pix_y[9:5]==10) && (pix_x[9:5]>=2) && (pix_x[9:5]<=4)); //Me difine el tamaño y=2^5 y x=2^5
+	assign row_addr_TIMER = pix_y[5:1]; //me define el tamaño de la letra
+	assign bit_addr_TIMER = pix_x[4:1]; //me define el tamaño de la letra
 	
 	always @* 
 	begin
@@ -186,8 +187,8 @@ module Generador_Letras(
 			3'h3: char_addr_NumTIMER = 7'h32;/*{3'b011, digitDec_MIN};//(decenas Mes)*/
 			3'h4: char_addr_NumTIMER = 7'h33;/*{3'b011, digitUni_MIN};//(unidades mes)*/
 			3'h5: char_addr_NumTIMER = 7'h3a;// /
-			3'h6: char_addr_NumTIMER = 7'h34;/*{3'b011, digitDec_SEG};//(unidad de millar aÃ±o)*/
-			3'h7: char_addr_NumTIMER = 7'h35;/*{3'b011, digitUni_SEG};//(Centenas aÃ±o)*/
+			3'h6: char_addr_NumTIMER = 7'h34;/*{3'b011, digitDec_SEG};//(unidad de millar año)*/
+			3'h7: char_addr_NumTIMER = 7'h35;/*{3'b011, digitUni_SEG};//(Centenas año)*/
 			default: char_addr_NumTIMER = 7'h00;//Espacio en blanco
 		endcase	
 	end
