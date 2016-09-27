@@ -154,16 +154,16 @@ module FSM_INIC_RAM(
 			rom_enable = 1;
 			w_ram_enable = 1;
 			r_ram_enable = 0;
-			if (Contador == 0) begin // Escribir 10H en posición 0 de RAM.
-				dir_rom = 18'b100000000000000000;
+			if (Contador == 0) begin // Escribir 00H en posición 0 de RAM.
+				dir_rom = 18'b000000000000000001;
 				dir_ram = 32'b00000000000000000000000000000001;
 			end
 			else if (Contador == 1) begin // Escribir 00H en posición 1 de RAM.
 				dir_rom = 18'b000000000000000001;
 				dir_ram = 32'b00000000000000000000000000000010;
 			end
-			else if (Contador == 2) begin // Escribir 00H en posición 2 de RAM.
-				dir_rom = 18'b000000000000000001;
+			else if (Contador == 2) begin // Escribir 10H en posición 2 de RAM.
+				dir_rom = 18'b100000000000000000;
 				dir_ram = 32'b00000000000000000000000000000100;
 			end
 			else if (Contador == 3) begin // Escribir 00H en posición 3 de RAM.
