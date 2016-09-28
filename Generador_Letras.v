@@ -19,12 +19,12 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module Generador_Letras(
-   //ENTRADAS
+	//ENTRADAS
 	input wire CLK,
 	input wire RESET,
-	//input wire [3:0] digitDec_DD, digitUni_DD, digitDec_M, digitUni_M, digitDec_AN, digitUni_AN,
-	//digitDec_HORA, digitUni_HORA, digitDec_MIN, digitUni_MIN, digitDec_SEG, digitUni_SEG,
-	//digitDec_TimerHORA, digitUni_TimerHORA, digitDec_TimerMIN, digitUni_TimerMIN, digitDec_TimerSEG, digitUni_TimerSEG,
+	input wire [3:0] digitDec_DD, digitUni_DD, digitDec_M, digitUni_M, digitDec_AN, digitUni_AN,
+	digitDec_HORA, digitUni_HORA, digitDec_MIN, digitUni_MIN, digitDec_SEG, digitUni_SEG,
+	digitDec_TimerHORA, digitUni_TimerHORA, digitDec_TimerMIN, digitUni_TimerMIN, digitDec_TimerSEG, digitUni_TimerSEG,
 	input wire [9:0] pix_x, pix_y, // Coordenadas del escáner del VGA.
 	//input wire [2:0] ctrl_rgb, // Switches del usuario para elegir color.
 	
@@ -82,17 +82,19 @@ module Generador_Letras(
 	assign row_addr_NumFECHA = pix_y[5:2]; //tamaño de la letra 
 	assign bit_addr_NumFECHA = pix_x[4:2]; //tamaño de la letra
 
+
+
 	always@*
 	begin
 		case(pix_x[7:5]) //coordenadas definidas dependiendo de las coordenadas especificadas anteriormente en NumFECHA_on
-			3'h6: char_addr_NumFECHA = 7'h30; /*{3'b011, digitDec_DD};//(decenas dia)*/
-			3'h7: char_addr_NumFECHA = 7'h31;/*{3'b011, digitUni_DD};//(unidades dia)*/
+			3'h6: char_addr_NumFECHA = {3'b011, digitDec_DD};//(decenas dia)  
+			3'h7: char_addr_NumFECHA = {3'b011, digitUni_DD};//(unidades dia) 
 			3'h0: char_addr_NumFECHA = 7'h2f;// /
-			3'h1: char_addr_NumFECHA = 7'h32;/*{3'b011, digitDec_M};//(decenas Mes)*/
-			3'h2: char_addr_NumFECHA = 7'h33;/*{3'b011, digitUni_M};//(unidades mes)*/
+			3'h1: char_addr_NumFECHA = {3'b011, digitDec_M};//(decenas Mes)
+			3'h2: char_addr_NumFECHA = {3'b011, digitUni_M};//(unidades mes)
 			3'h3: char_addr_NumFECHA = 7'h2f;// /
-			3'h4: char_addr_NumFECHA = 7'h34;/*{3'b011, digitDec_AN};//(unidad de millar año)*/
-			3'h5: char_addr_NumFECHA = 7'h35;/*{3'b011, digitUni_AN};//(Centenas año)*/
+			3'h4: char_addr_NumFECHA = {3'b011, digitDec_AN};//(unidad de millar año)
+			3'h5: char_addr_NumFECHA = {3'b011, digitUni_AN};//(Centenas año)
 			default: char_addr_NumFECHA = 7'h00;//Espacio en blanco
 		endcase	
 	end
@@ -143,14 +145,14 @@ module Generador_Letras(
 	always@*
 	begin
 		case(pix_x[6:4]) //coordenadas definidas dependiendo de las coordenadas especificadas anteriormente en NumHORA_on
-			3'h0: char_addr_NumHORA = 7'h30; /*{3'b011, digitDec_HORA};//(decenas dia)*/
-			3'h1: char_addr_NumHORA = 7'h31;/*{3'b011, digitUni_HORA};//(unidades dia)*/
+			3'h0: char_addr_NumHORA = {3'b011, digitDec_HORA};//(decenas dia)
+			3'h1: char_addr_NumHORA = {3'b011, digitUni_HORA};//(unidades dia)
 			3'h2: char_addr_NumHORA = 7'h3a;// /
-			3'h3: char_addr_NumHORA = 7'h32;/*{3'b011, digitDec_MIN};//(decenas Mes)*/
-			3'h4: char_addr_NumHORA = 7'h33;/*{3'b011, digitUni_MIN};//(unidades mes)*/
+			3'h3: char_addr_NumHORA = {3'b011, digitDec_MIN};//(decenas Mes)
+			3'h4: char_addr_NumHORA = {3'b011, digitUni_MIN};//(unidades mes)
 			3'h5: char_addr_NumHORA = 7'h3a;// /
-			3'h6: char_addr_NumHORA = 7'h34;/*{3'b011, digitDec_SEG};//(unidad de millar año)*/
-			3'h7: char_addr_NumHORA = 7'h35;/*{3'b011, digitUni_SEG};//(Centenas año)*/
+			3'h6: char_addr_NumHORA = {3'b011, digitDec_SEG};//(unidad de millar año)
+			3'h7: char_addr_NumHORA = {3'b011, digitUni_SEG};//(Centenas año)
 			default: char_addr_NumHORA = 7'h00;//Espacio en blanco
 		endcase	
 	end
@@ -181,14 +183,14 @@ module Generador_Letras(
 	always@*
 	begin
 		case(pix_x[6:4]) //coordenadas definidas dependiendo de las coordenadas especificadas anteriormente en NumTIMER_on
-			3'h0: char_addr_NumTIMER = 7'h30; /*{3'b011, digitDec_HORA};//(decenas dia)*/
-			3'h1: char_addr_NumTIMER = 7'h31;/*{3'b011, digitUni_HORA};//(unidades dia)*/
+			3'h0: char_addr_NumTIMER = {3'b011, digitDec_TimerHORA};//(decenas dia)
+			3'h1: char_addr_NumTIMER = {3'b011, digitUni_TimerHORA};//(unidades dia)
 			3'h2: char_addr_NumTIMER = 7'h3a;// /
-			3'h3: char_addr_NumTIMER = 7'h32;/*{3'b011, digitDec_MIN};//(decenas Mes)*/
-			3'h4: char_addr_NumTIMER = 7'h33;/*{3'b011, digitUni_MIN};//(unidades mes)*/
+			3'h3: char_addr_NumTIMER = {3'b011, digitDec_TimerMIN};//(decenas Mes)
+			3'h4: char_addr_NumTIMER = {3'b011, digitUni_TimerMIN};//(unidades mes)
 			3'h5: char_addr_NumTIMER = 7'h3a;// /
-			3'h6: char_addr_NumTIMER = 7'h34;/*{3'b011, digitDec_SEG};//(unidad de millar año)*/
-			3'h7: char_addr_NumTIMER = 7'h35;/*{3'b011, digitUni_SEG};//(Centenas año)*/
+			3'h6: char_addr_NumTIMER = {3'b011, digitDec_TimerSEG};//(decenas año)
+			3'h7: char_addr_NumTIMER = {3'b011, digitUni_TimerSEG};//(unidades año)
 			default: char_addr_NumTIMER = 7'h00;//Espacio en blanco
 		endcase	
 	end
