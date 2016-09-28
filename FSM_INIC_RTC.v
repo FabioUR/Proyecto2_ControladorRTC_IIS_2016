@@ -32,9 +32,8 @@ module FSM_INIC_RTC(
 	
 	output wire [31:0] dir_ram,
 	output wire w_ram_enable,
-	output wire r_ram_enable,
-	output reg [6:0] Contador
-   );
+	output wire r_ram_enable
+	);
 	
 	reg w_r;
 	reg do_it;
@@ -85,7 +84,7 @@ module FSM_INIC_RTC(
 	
 	reg [1:0] est_sig;
 	reg [1:0] est_act;
-	//reg [6:0] Contador;
+	reg [6:0] Contador;
 	
 	/* Lógica Secuencial */
 	
@@ -102,9 +101,9 @@ module FSM_INIC_RTC(
 	
 	always @(posedge clk) begin
 		if (est_act == est0) begin
-			Contador <= 0;
+			Contador <= 7'b0000000;
 		end else	begin
-			Contador <= Contador + 1;
+			Contador <= Contador + 7'b0000001;
 		end
 	end
 	

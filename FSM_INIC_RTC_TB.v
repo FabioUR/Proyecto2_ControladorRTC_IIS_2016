@@ -42,8 +42,7 @@ module FSM_INIC_RTC_TB;
 	wire [31:0] dir_ram;
 	wire w_ram_enable;
 	wire r_ram_enable;
-	wire [6:0] Contador;
-
+	
 	// Instantiate the Unit Under Test (UUT)
 	FSM_INIC_RTC uut (
 		.clk(clk), 
@@ -60,8 +59,7 @@ module FSM_INIC_RTC_TB;
 		.wr(wr), 
 		.dir_ram(dir_ram), 
 		.w_ram_enable(w_ram_enable), 
-		.r_ram_enable(r_ram_enable), 
-		.Contador(Contador)
+		.r_ram_enable(r_ram_enable) 
 	);
 	
 	always #5 clk = !clk;
