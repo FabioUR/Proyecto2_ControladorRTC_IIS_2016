@@ -55,7 +55,8 @@ module FSM_LEER_RTC(
 	output reg dir_min_tim,
 	
 	output reg dat_hora_tim,
-	output reg dir_hora_tim
+	output reg dir_hora_tim,
+	output wire [8:0] contador2
    );
 	
 	reg w_r;
@@ -99,7 +100,7 @@ module FSM_LEER_RTC(
 		if (reset) begin
 			est_act <= est0;
 		end else begin
-			if (contador > 350) begin
+			if (contador == 351) begin
 				est_act <= est0;
 			end else begin
 				est_act <= est_sig;
@@ -175,7 +176,7 @@ module FSM_LEER_RTC(
 				dat_seg_tim = 0;
 				dat_min_tim = 0;
 				dat_hora_tim = 0;
-				if (350 >= contador > 315) begin
+				if (contador > 315) begin
 					dir_com_cyt = 0;
 					dir_seg = 0;
 					dir_min = 0;
@@ -186,7 +187,7 @@ module FSM_LEER_RTC(
 					dir_seg_tim = 0;
 					dir_min_tim = 0;
 					dir_hora_tim = 1;
-				end else	if (315 >= contador > 280) begin
+				end else	if (contador > 280) begin
 					dir_com_cyt = 0;
 					dir_seg = 0;
 					dir_min = 0;
@@ -197,7 +198,7 @@ module FSM_LEER_RTC(
 					dir_seg_tim = 0;
 					dir_min_tim = 1;
 					dir_hora_tim = 0;
-				end else	if (280 >= contador > 245) begin
+				end else	if (contador > 245) begin
 					dir_com_cyt = 0;
 					dir_seg = 0;
 					dir_min = 0;
@@ -208,7 +209,7 @@ module FSM_LEER_RTC(
 					dir_seg_tim = 1;
 					dir_min_tim = 0;
 					dir_hora_tim = 0;
-				end else if (245 >= contador > 210) begin
+				end else if (contador > 210) begin
 					dir_com_cyt = 0;
 					dir_seg = 0;
 					dir_min = 0;
@@ -219,7 +220,7 @@ module FSM_LEER_RTC(
 					dir_seg_tim = 0;
 					dir_min_tim = 0;
 					dir_hora_tim = 0;
-				end else if (210 >= contador > 175) begin
+				end else if (contador > 175) begin
 					dir_com_cyt = 0;
 					dir_seg = 0;
 					dir_min = 0;
@@ -230,7 +231,7 @@ module FSM_LEER_RTC(
 					dir_seg_tim = 0;
 					dir_min_tim = 0;
 					dir_hora_tim = 0;
-				end else if (175 >= contador > 140) begin
+				end else if (contador > 140) begin
 					dir_com_cyt = 0;
 					dir_seg = 0;
 					dir_min = 0;
@@ -241,7 +242,7 @@ module FSM_LEER_RTC(
 					dir_seg_tim = 0;
 					dir_min_tim = 0;
 					dir_hora_tim = 0;
-				end else if (140 >= contador > 105) begin
+				end else if (contador > 105) begin
 					dir_com_cyt = 0;
 					dir_seg = 0;
 					dir_min = 0;
@@ -252,7 +253,7 @@ module FSM_LEER_RTC(
 					dir_seg_tim = 0;
 					dir_min_tim = 0;
 					dir_hora_tim = 0;
-				end else if (105 >= contador > 70) begin
+				end else if (contador > 70) begin
 					dir_com_cyt = 0;
 					dir_seg = 0;
 					dir_min = 1;
@@ -263,7 +264,7 @@ module FSM_LEER_RTC(
 					dir_seg_tim = 0;
 					dir_min_tim = 0;
 					dir_hora_tim = 0;
-				end else if (70 >= contador > 35) begin
+				end else if (contador > 35) begin
 					dir_com_cyt = 0;
 					dir_seg = 1;
 					dir_min = 0;
@@ -299,7 +300,7 @@ module FSM_LEER_RTC(
 				dir_seg_tim = 0;
 				dir_min_tim = 0;
 				dir_hora_tim = 0;
-				if (350 >= contador > 315) begin
+				if (contador > 315) begin
 					dir_com_cyt = 0;
 					dat_seg = 0;
 					dat_min = 0;
@@ -310,7 +311,7 @@ module FSM_LEER_RTC(
 					dat_seg_tim = 0;
 					dat_min_tim = 0;
 					dat_hora_tim = 1;
-				end else if (315 >= contador > 280) begin
+				end else if (contador > 280) begin
 					dir_com_cyt = 0;
 					dat_seg = 0;
 					dat_min = 0;
@@ -321,7 +322,7 @@ module FSM_LEER_RTC(
 					dat_seg_tim = 0;
 					dat_min_tim = 1;
 					dat_hora_tim = 0;
-				end else if(280 >= contador > 245) begin
+				end else if(contador > 245) begin
 					dir_com_cyt = 0;
 					dat_seg = 0;
 					dat_min = 0;
@@ -332,7 +333,7 @@ module FSM_LEER_RTC(
 					dat_seg_tim = 1;
 					dat_min_tim = 0;
 					dat_hora_tim = 0;
-				end else if (245 >= contador > 210) begin
+				end else if (contador > 210) begin
 					dir_com_cyt = 0;
 					dat_seg = 0;
 					dat_min = 0;
@@ -343,7 +344,7 @@ module FSM_LEER_RTC(
 					dat_seg_tim = 0;
 					dat_min_tim = 0;
 					dat_hora_tim = 0;
-				end else if (210 >= contador > 175) begin
+				end else if (contador > 175) begin
 					dir_com_cyt = 0;
 					dat_seg = 0;
 					dat_min = 0;
@@ -354,7 +355,7 @@ module FSM_LEER_RTC(
 					dat_seg_tim = 0;
 					dat_min_tim = 0;
 					dat_hora_tim = 0;
-				end else if (175 >= contador > 140) begin
+				end else if (contador > 140) begin
 					dir_com_cyt = 0;
 					dat_seg = 0;
 					dat_min = 0;
@@ -365,7 +366,7 @@ module FSM_LEER_RTC(
 					dat_seg_tim = 0;
 					dat_min_tim = 0;
 					dat_hora_tim = 0;
-				end else if (140 >= contador > 105) begin
+				end else if (contador > 105) begin
 					dir_com_cyt = 0;
 					dat_seg = 0;
 					dat_min = 0;
@@ -376,7 +377,7 @@ module FSM_LEER_RTC(
 					dat_seg_tim = 0;
 					dat_min_tim = 0;
 					dat_hora_tim = 0;
-				end else if (105 >= contador > 70) begin
+				end else if (contador > 70) begin
 					dir_com_cyt = 0;
 					dat_seg = 0;
 					dat_min = 1;
@@ -387,7 +388,7 @@ module FSM_LEER_RTC(
 					dat_seg_tim = 0;
 					dat_min_tim = 0;
 					dat_hora_tim = 0;
-				end else if (70 >= contador > 35) begin
+				end else if (contador > 35) begin
 					dir_com_cyt = 0;
 					dat_seg = 1;
 					dat_min = 0;
@@ -464,5 +465,6 @@ module FSM_LEER_RTC(
 			dir_hora_tim = 0;
 		end
 	end
-
+	
+	assign contador2 = contador;
 endmodule
