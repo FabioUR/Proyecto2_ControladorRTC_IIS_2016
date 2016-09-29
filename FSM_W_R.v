@@ -34,7 +34,7 @@ module FSM_W_R(
 	
 	reg [2:0] est_sig;
 	reg [2:0] est_act;
-	reg [5:0] Contador;
+	reg [5:0] contador;
 		
 	/* Lógica Secuencial */
 	
@@ -49,9 +49,9 @@ module FSM_W_R(
 	
 	always @(posedge clk) begin
 		if (est_act == est0) begin
-			Contador <= 6'b000000;
+			contador <= 6'b000000;
 		end else	begin
-			Contador <= Contador + 6'b000001;
+			contador <= contador + 6'b000001;
 		end
 	end
 	
@@ -68,50 +68,44 @@ module FSM_W_R(
 				end
 			end
 			est1: begin
-				if (Contador == 6'b000001) begin
+				if (contador == 1) begin // 20ns.
 					est_sig = est2;
-				end
-				else begin
+				end else begin
 					est_sig = est1;
 				end
 			end
 			est2: begin
-				if (Contador == 6'b001001) begin
+				if (contador == 9) begin // 80ns.
 					est_sig = est3;
-				end
-				else begin
+				end else begin
 					est_sig = est2;
 				end
 			end
 			est3: begin
-				if (Contador == 6'b001011) begin
+				if (contador == 11) begin // 20ns.
 					est_sig = est4;
-				end
-				else begin
+				end else begin
 					est_sig = est3;
 				end
 			end
 			est4: begin
-				if (Contador == 6'b010110) begin
+				if (contador == 22) begin // 110ns.
 					est_sig = est5;
-				end
-				else begin
+				end else begin
 					est_sig = est4;
 				end
 			end
 			est5: begin
-				if (Contador == 6'b011110) begin
+				if (contador == 30) begin // 80ns.
 					est_sig = est6;
-				end
-				else begin
+				end else begin
 					est_sig = est5;
 				end
 			end
 			est6: begin
-				if (Contador == 6'b100001) begin
+				if (contador == 33) begin // 30ns.
 					est_sig = est0;
-				end
-				else begin
+				end else begin
 					est_sig = est6;
 				end
 			end
@@ -131,12 +125,10 @@ module FSM_W_R(
 			read_data = 1'b0;
 			if (w_r) begin
 				rd = 1'bz;
-			end
-			else begin
+			end else begin
 				rd = 1'b1;
 			end
-		end
-      else if (est_act == est1) begin
+		end else if (est_act == est1) begin
 			cs = 1'b1;
 			wr = 1'b1;
 			a_d = 1'b0;
@@ -145,12 +137,10 @@ module FSM_W_R(
 			read_data = 1'b0;
 			if (w_r) begin
 				rd = 1'bz;
-			end
-			else begin
+			end else begin
 				rd = 1'b1;
 			end
-		end
-      else if (est_act == est2) begin
+		end else if (est_act == est2) begin
 			cs = 1'b0;
 			rd = 1'b1;
 			wr = 1'b0;
@@ -158,8 +148,7 @@ module FSM_W_R(
 			send_add = 1'b1;
 			send_data = 1'b0;
 			read_data = 1'b0;
-		end
-		else if (est_act == est3) begin
+		end else if (est_act == est3) begin
 			cs = 1'b1;
 			wr = 1'b1;
 			a_d = 1'b0;
@@ -168,12 +157,10 @@ module FSM_W_R(
 			read_data = 1'b0;
 			if (w_r) begin
 				rd = 1'bz;
-			end
-			else begin
+			end else begin
 				rd = 1'b1;
 			end
-		end
-		else if (est_act == est4) begin
+		end else if (est_act == est4) begin
 			cs = 1'b1;
 			wr = 1'b1;
 			a_d = 1'b1;
@@ -182,12 +169,10 @@ module FSM_W_R(
 			read_data = 1'b0;
 			if (w_r) begin
 				rd = 1'bz;
-			end
-			else begin
+			end else begin
 				rd = 1'b1;
 			end
-		end
-		else if (est_act == est5) begin
+		end else if (est_act == est5) begin
 			cs = 1'b0;
 			a_d = 1'b1;
 			send_add = 1'b0;
@@ -196,14 +181,12 @@ module FSM_W_R(
 				rd = 1'b1;
 				wr = 1'b0;
 				send_data = 1'b1;
-			end
-			else begin
+			end else begin
 				rd = 1'b0;
 				wr = 1'b1;
 				send_data = 1'b0;
 			end
-		end
-		else if (est_act == est6) begin
+		end else if (est_act == est6) begin
 			cs = 1'b1;
 			wr = 1'b1;
 			a_d = 1'b1;
@@ -212,14 +195,12 @@ module FSM_W_R(
 				rd = 1'bz;
 				send_data = 1'b1;
 				read_data = 1'b0;
-			end
-			else begin
+			end else begin
 				rd = 1'b1;
 				send_data = 1'b0;
 				read_data = 1'b1; // En este estado se puede leer el dato.
 			end
-		end
-		else begin
+		end else begin
 			cs = 1'b1;
 			wr = 1'b1;
 			a_d = 1'b1;
@@ -228,8 +209,7 @@ module FSM_W_R(
 			read_data = 1'b0;
 			if (w_r) begin
 				rd = 1'bz;
-			end
-			else begin
+			end else begin
 				rd = 1'b1;
 			end
 		end
