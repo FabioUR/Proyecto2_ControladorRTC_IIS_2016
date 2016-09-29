@@ -55,8 +55,7 @@ module FSM_LEER_RTC(
 	output reg dir_min_tim,
 	
 	output reg dat_hora_tim,
-	output reg dir_hora_tim,
-	output wire [8:0] contador2
+	output reg dir_hora_tim
    );
 	
 	reg w_r;
@@ -465,6 +464,5 @@ module FSM_LEER_RTC(
 			dir_hora_tim = 0;
 		end
 	end
-	
-	assign contador2 = contador;
+
 endmodule

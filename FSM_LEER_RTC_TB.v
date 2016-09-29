@@ -55,8 +55,7 @@ module FSM_LEER_RTC_TB;
 	wire dir_min_tim;
 	wire dat_hora_tim;
 	wire dir_hora_tim;
-	wire [8:0] contador2;
-
+	
 	// Instantiate the Unit Under Test (UUT)
 	FSM_LEER_RTC uut (
 		.clk(clk), 
@@ -86,8 +85,7 @@ module FSM_LEER_RTC_TB;
 		.dat_min_tim(dat_min_tim), 
 		.dir_min_tim(dir_min_tim), 
 		.dat_hora_tim(dat_hora_tim), 
-		.dir_hora_tim(dir_hora_tim),
-		.contador2(contador2)
+		.dir_hora_tim(dir_hora_tim)
 	);
 	
 	always #5 clk = !clk;
