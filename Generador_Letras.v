@@ -22,11 +22,11 @@ module Generador_Letras(
 	//ENTRADAS
 	input wire CLK,
 	input wire RESET,
-	input wire [3:0] digitDec_DD, digitUni_DD, digitDec_M, digitUni_M, digitDec_AN, digitUni_AN,
-	digitDec_HORA, digitUni_HORA, digitDec_MIN, digitUni_MIN, digitDec_SEG, digitUni_SEG,
-	digitDec_TimerHORA, digitUni_TimerHORA, digitDec_TimerMIN, digitUni_TimerMIN, digitDec_TimerSEG, digitUni_TimerSEG,
+	input wire [7:0] digit_DD, digit_M, digit_AN, digit_HORA, digit_MIN, digit_SEG, digit_TimerHORA, digit_TimerMIN, digit_TimerSEG,
+	input wire [7:0] bandera_cursor, //banderas para activar lo que se desea cambiar
+	//input wire [2:0] switch_cursor,  //establecer si se cambia fecha, hora, timer
 	input wire [9:0] pix_x, pix_y, // Coordenadas del escáner del VGA.
-	//input wire [2:0] ctrl_rgb, // Switches del usuario para elegir color.
+	input wire Alarma_on,
 	
 	//SALIDAS
 	output reg [2:0] graph_rgb // Salida para controlar color en VGA.
@@ -50,10 +50,80 @@ module Generador_Letras(
 	font_rom font_unit
       (.clk(CLK), .addr(rom_addr), .data(font_word));
 	
+	
+	//VARIABLES PARA CADA NUMERO QUE SE VAN A DIVIDIR DE UN NUMERO MAYOR
+	wire [3:0] digitDec_DD, digitUni_DD, digitDec_M, digitUni_M, digitDec_AN, digitUni_AN,
+	digitDec_HORA, digitUni_HORA, digitDec_MIN, digitUni_MIN, digitDec_SEG, digitUni_SEG,
+	digitDec_TimerHORA, digitUni_TimerHORA, digitDec_TimerMIN, digitUni_TimerMIN, digitDec_TimerSEG, digitUni_TimerSEG;
+	
+	
+	
+	//PARA REALIZAR PRUEBA
+	//HACER UN DIVISOR DE FRECUENCIA DE 25MHz A APROX
+	reg [24:0] cont = 0;
+	wire CLK1Hz;
+	
+	always @ (posedge CLK) begin
+		if (cont == 25000000) begin
+			cont <= 0;
+		end
+		else begin
+			cont <= cont + 1;
+		end
+	end
+	assign CLK1Hz = cont[24];
+
+
+///// BORRAR
+/////	BORRAR
+/*	reg [7:0] TIMERHORA=0;
+	
+	reg [5:0] contadora = 0;
+
+	always @(posedge CLK1Hz)
+	begin
+		if (contadora==59)
+		begin
+			TIMERHORA=4'b0000;
+			contadora=0;
+		end
+		else
+		begin
+			TIMERHORA=TIMERHORA+1;
+			contadora=contadora+1;
+		end
+	end
+	assign digit_TimerHORA = TIMERHORA;*/
+	
+	
+	//FECHA
+	assign digitDec_DD = digit_DD[7:4];
+	assign digitUni_DD = digit_DD[3:0];
+	assign digitDec_M  = digit_M[7:4];
+	assign digitUni_M  = digit_M[3:0];
+	assign digitDec_AN = digit_AN[7:4];
+	assign digitUni_AN = digit_AN[3:0];
+	
+	//HORA
+	assign digitDec_HORA = digit_HORA[7:4];
+	assign digitUni_HORA = digit_HORA[3:0];
+	assign digitDec_MIN  = digit_MIN[7:4];
+	assign digitUni_MIN  = digit_MIN[3:0];
+	assign digitDec_SEG  = digit_SEG[7:4];
+	assign digitUni_SEG  = digit_SEG[3:0];
+	
+	//TIMER
+	assign digitDec_TimerHORA = digit_TimerHORA[7:4];
+	assign digitUni_TimerHORA = digit_TimerHORA[3:0];
+	assign digitDec_TimerMIN  = digit_TimerMIN[7:4];
+	assign digitUni_TimerMIN  = digit_TimerMIN[3:0];
+	assign digitDec_TimerSEG  = digit_TimerSEG[7:4];
+	assign digitUni_TimerSEG  = digit_TimerSEG[3:0];
+	
 	//1. Definir el espacio y las letras correspondientes a la palabra FECHA 16x32
 	assign FECHA_on = ((pix_y[9:5]==1) && (pix_x[9:4]>=18) && (pix_x[9:4]<=22)); //Me difine el tamaño y=2^5 y x=2^5
 	assign row_addr_FECHA = pix_y[4:1]; //me define el tamaño de la letra
-	assign bit_addr_FECHA = pix_x[4:1]; //me define el tamaño de la letra
+	assign bit_addr_FECHA = pix_x[3:1]; //me define el tamaño de la letra
 	
 	always @(posedge CLK, posedge RESET) begin
 			if(RESET)
@@ -82,8 +152,6 @@ module Generador_Letras(
 	assign row_addr_NumFECHA = pix_y[5:2]; //tamaño de la letra 
 	assign bit_addr_NumFECHA = pix_x[4:2]; //tamaño de la letra
 
-
-
 	always@*
 	begin
 		case(pix_x[7:5]) //coordenadas definidas dependiendo de las coordenadas especificadas anteriormente en NumFECHA_on
@@ -101,8 +169,8 @@ module Generador_Letras(
 	
 	//3. Mostrar Palabra HORA
 	assign HORA_on = ((pix_y[9:5]==6) && (pix_x[9:5]>=2) && (pix_x[9:5]<=3)); //Me difine el tamaño y=2^5 y x=2^5
-	assign row_addr_HORA = pix_y[5:1]; //me define el tamaño de la letra
-	assign bit_addr_HORA = pix_x[4:1]; //me define el tamaño de la letra
+	assign row_addr_HORA = pix_y[4:1]; //pix_y[5:1] //me define el tamaño de la letra
+	assign bit_addr_HORA = pix_x[3:1]; //pix_x[4:1]//me define el tamaño de la letra
 	
 	always @* 
 	begin
@@ -121,8 +189,8 @@ module Generador_Letras(
 	//Crear posteriormente con una variable AM/PM, para seleccionar si se esta en AM/PM, usandolo un case,
 	//en este caso, posiblemente con un switch
 	assign ForMili_on = ((pix_y[9:5]==7) && (pix_x[9:5]>=9) && (pix_x[9:5]<=10)); //Me difine el tamaño y=2^5 y x=2^5
-	assign row_addr_ForMili = pix_y[5:1]; //me define el tamaño de la letra
-	assign bit_addr_ForMili = pix_x[4:1]; //me define el tamaño de la letra
+	assign row_addr_ForMili = pix_y[4:1]; // pix_y[5:1]//me define el tamaño de la letra
+	assign bit_addr_ForMili = pix_x[3:1]; // pix_x[4:1]//me define el tamaño de la letra
 	
 	always @* 
 	begin
@@ -159,8 +227,8 @@ module Generador_Letras(
 	
 	//6. Mostrar Palabra TIMER
 	assign TIMER_on = ((pix_y[9:5]==10) && (pix_x[9:5]>=2) && (pix_x[9:5]<=4)); //Me difine el tamaño y=2^5 y x=2^5
-	assign row_addr_TIMER = pix_y[5:1]; //me define el tamaño de la letra
-	assign bit_addr_TIMER = pix_x[4:1]; //me define el tamaño de la letra
+	assign row_addr_TIMER = pix_y[4:1]; //pix_y[5:1]//me define el tamaño de la letra
+	assign bit_addr_TIMER = pix_x[3:1]; //pix_x[4:1]//me define el tamaño de la letra
 	
 	always @* 
 	begin
@@ -197,8 +265,8 @@ module Generador_Letras(
 
 	//8. Mostrar Simbolo para la alarma
 	assign SIMBOLO_on = (pix_y[9:5]==9) && (pix_x[9:5]==16);
-	assign row_addr_SIMBOLO = pix_y[5:1];
-	assign bit_addr_SIMBOLO = pix_x[4:1];
+	assign row_addr_SIMBOLO = pix_y[4:1]; //pix_y[5:1]
+	assign bit_addr_SIMBOLO = pix_x[3:1]; //pix_x[4:1]
 
 	always@*
 	begin
@@ -231,9 +299,16 @@ module Generador_Letras(
 			char_addr = char_addr_NumFECHA;
 			row_addr = row_addr_NumFECHA;
 			bit_addr = bit_addr_NumFECHA;
+			//Evalúa que se está configurando (0: modo normal, 1: config.hora, 2: config.fecha, 4: config.timer)
 				if (font_bit) begin
 					graph_rgb = 3'b111; //blanco
 				end
+				else if ((~font_bit)&&/*(switch_cursor == 1)&&*/(pix_y[9:5]<=3) && (pix_y[9:5]>=2) &&(pix_x[9:5]>=6)&&(pix_x[9:5]<8)&&(bandera_cursor[7]==1)) //DIA QUITE UN = EN SEGUNDO X
+					graph_rgb = 3'b001;//Hace un cursor AZUL
+				else if ((~font_bit)&&/*(switch_cursor == 1)&&*/(pix_y[9:5]<=3) && (pix_y[9:5]>=2) &&(pix_x[9:5]>=9)&&(pix_x[9:5]<11)&&(bandera_cursor[7]==1))   //MES  QUITE UN = EN SEGUNDO X
+					graph_rgb = 3'b001;//Hace un cursor AZUL
+				else if ((~font_bit)&&/*(switch_cursor == 1)&&*/(pix_y[9:5]<=3) && (pix_y[9:5]>=2) &&(pix_x[9:5]>=12)&&(pix_x[9:5]<14)&&(bandera_cursor[6]==1))  //AÑO  QUITE UN = EN SEGUNDO X
+					graph_rgb = 3'b001;//Hace un cursor AZUL
 		end
 		
 		else if (HORA_on)  //Palabra HORA
@@ -251,12 +326,19 @@ module Generador_Letras(
 			char_addr = char_addr_NumHORA;
 			row_addr = row_addr_NumHORA;
 			bit_addr = bit_addr_NumHORA;
+			//Evalúa que se está configurando (0: modo normal, 1: config.hora, 2: config.fecha, 4: config.timer)
 				if (font_bit) begin
 					graph_rgb = 3'b111; //blanco
 				end
+				else if ((~font_bit)&&/*(switch_cursor == 2)&&*/(pix_y[9:5]==7)&&(pix_x[9:4]>=8)&&(pix_x[9:4]<10)&&(bandera_cursor[5]==1)) //HORA QUITE UN = EN SEGUNDO X
+					graph_rgb = 3'b001;//Hace un cursor AZUL
+				else if ((~font_bit)&&/*(switch_cursor == 2)&&*/(pix_y[9:5]==7)&&(pix_x[9:4]>=11)&&(pix_x[9:4]<13)&&(bandera_cursor[4]==1))   //MINUTO  QUITE UN = EN SEGUNDO X
+					graph_rgb = 3'b001;//Hace un cursor AZUL
+				else if ((~font_bit)&&/*(switch_cursor == 2)&&*/(pix_y[9:5]==7)&&(pix_x[9:4]>=14)&&(pix_x[9:4]<16)&&(bandera_cursor[3]==1))  //SEGUNDO  QUITE UN = EN SEGUNDO X
+					graph_rgb = 3'b001;//Hace un cursor AZUL
 		end
 		
-		else if (ForMili_on) //Palabra AM/PM. Posteriormente se hara cambio
+		else if (ForMili_on) //Palabra 24H. Posteriormente se hará cambio
 		begin
 			char_addr = char_addr_ForMili;
 			row_addr = row_addr_ForMili;
@@ -281,17 +363,28 @@ module Generador_Letras(
 			char_addr = char_addr_NumTIMER;
 			row_addr = row_addr_NumTIMER;
 			bit_addr = bit_addr_NumTIMER;
+			//Evalúa que se está configurando (0: modo normal, 1: config.hora, 2: config.fecha, 4: config.timer)
 				if (font_bit) begin
 					graph_rgb = 3'b111;  //blanco
 				end
+				else if ((~font_bit)&&/*(switch_cursor == 4)&&*/(pix_y[9:5]==11)&&(pix_x[9:4]>=8 )&&(pix_x[9:4]<10)&&(bandera_cursor[2]==1)) //HORA QUITE UN = EN SEGUNDO X
+					graph_rgb = 3'b001;//Hace un cursor AZUL
+				else if ((~font_bit)&&/*(switch_cursor == 4)&&*/(pix_y[9:5]==11)&&(pix_x[9:4]>=11)&&(pix_x[9:4]<13)&&(bandera_cursor[1]==1))   //MINUTO  QUITE UN = EN SEGUNDO X
+					graph_rgb = 3'b001;//Hace un cursor AZUL
+				else if ((~font_bit)&&/*(switch_cursor == 4)&&*/(pix_y[9:5]==11)&&(pix_x[9:4]>=14)&&(pix_x[9:4]<16)&&(bandera_cursor[0]==1))  //SEGUNDO  QUITE UN = EN SEGUNDO X
+					graph_rgb = 3'b001;//Hace un cursor AZUL
 		end
 		
 		else if (SIMBOLO_on) //Impresion del Simbolo
+									//FALTA AGREGAR LA CONDICION CUANDO PARPADEA LA ALARMA, 
 		begin
 			char_addr = char_addr_SIMBOLO;
 			row_addr = row_addr_SIMBOLO;
 			bit_addr = bit_addr_SIMBOLO;
 				if (font_bit) begin
+					if (Alarma_on==1 && CLK1Hz==1)
+						graph_rgb = 3'b001; //azul
+					else
 					graph_rgb = 3'b111;   //blanco
 				end
 		end
