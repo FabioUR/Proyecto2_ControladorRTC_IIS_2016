@@ -19,12 +19,12 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module Antirebote(
-    input wire aumento,
+    input wire entrada,
     input wire clk,			 
-	 output wire incremento
+	 output wire salida
     );
 
-//El antirebote consiste en pasar la señal por 5 Flip Flops con el fin de evitar que filtren valores
+//El antirebote consiste en pasar la seÃ±al por 5 Flip Flops con el fin de evitar que filtren valores
 //indeseados
 
 	reg ff01;
@@ -35,14 +35,14 @@ module Antirebote(
 
 	always @(posedge clk)
 	begin
-		ff01<=aumento;
+		ff01<=entrada;
 		ff02<=ff01;
 		ff03<=ff02;
 		ff04<=ff03;
 		ff05<=ff04;  
 	end
 
-	assign incremento = ff01 && ff02 && ff03 && ff04 && ff05 && aumento; //de esta manera se asegura que 
+	assign salida = ff01 && ff02 && ff03 && ff04 && ff05 && ~entrada; //de esta manera se asegura que 
 	//el dato se encuentre en todos los flip flops
 	
 endmodule
