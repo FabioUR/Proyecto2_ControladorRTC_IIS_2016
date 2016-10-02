@@ -21,7 +21,7 @@
 module Generador_Letras(
 	//ENTRADAS
 	input wire CLK,
-	input wire RESET,
+	//input wire RESET,
 	input wire [7:0] digit_DD, digit_M, digit_AN, digit_HORA, digit_MIN, digit_SEG, digit_TimerHORA, digit_TimerMIN, digit_TimerSEG,
 	input wire [7:0] bandera_cursor, //banderas para activar lo que se desea cambiar
 	//input wire [2:0] switch_cursor,  //establecer si se cambia fecha, hora, timer
