@@ -25,30 +25,30 @@
 module Antirebote_TB;
 
 	// Inputs
-	reg aumento;
+	reg entrada;
 	reg clk;
 
 	// Outputs
-	wire incremento;
+	wire salida;
 
 	// Instantiate the Unit Under Test (UUT)
 	Antirebote uut (
-		.aumento(aumento), 
+		.entrada(entrada), 
 		.clk(clk), 
-		.incremento(incremento)
+		.salida(salida)
 	);
 
 	always #5 clk = ~clk;
 	initial begin
 		// Initialize Inputs
-		aumento = 0;
+		entrada = 0;
 		clk = 1;
 
 		// Wait 100 ns for global reset to finish
 		#10;
-		aumento = 1;
+		entrada = 1;
 		#50;
-		aumento = 0;
+		entrada = 0;
 		#50;
       $stop;
 		// Add stimulus here
