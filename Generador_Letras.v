@@ -68,7 +68,7 @@ module Generador_Letras(
 			cont <= 0;
 		end
 		else begin
-			cont <= cont + 1;
+			cont <= cont + 1'b1;
 		end
 	end
 	assign CLK1Hz = cont[24];
@@ -125,7 +125,7 @@ module Generador_Letras(
 	assign row_addr_FECHA = pix_y[4:1]; //me define el tamaño de la letra
 	assign bit_addr_FECHA = pix_x[3:1]; //me define el tamaño de la letra
 	
-	always @(posedge CLK, posedge RESET) begin
+	/*always @(posedge CLK, posedge RESET) begin
 			if(RESET)
 				begin
 				char_addr_FECHA_reg <= 0;
@@ -134,7 +134,7 @@ module Generador_Letras(
 				begin
 				char_addr_FECHA_reg <= char_addr_FECHA;
 				end
-	end
+	end*/
 	
 	always @* 
 		case(pix_x[6:4]) //para este caso cada 2^4 bits se pinta nueva letra
@@ -272,7 +272,7 @@ module Generador_Letras(
 	begin
 		case(pix_x[9:5]) //coordenadas definidas dependiendo de las coordenadas especificadas anteriormente en SIMBOLO_on
 			5'd16: char_addr_SIMBOLO = 7'h06; //simbolo de espadas
-			//default: char_addr_SIMBOLO = 7'h00;//Espacio en blanco
+			default: char_addr_SIMBOLO = 7'h00;//Espacio en blanco
 		endcase	
 	end
 	
