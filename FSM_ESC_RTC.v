@@ -22,12 +22,19 @@ module FSM_ESC_RTC(
    input wire clk, reset,
 	input wire do_it_esc,
 	
+	input wire estado_hora,
+	input wire estado_fecha,
+	input wire estado_timer,
+	
 	output wire a_d, cs, rd, wr, // Señales de ctrl RTC.
 	
 	output reg ch0_mux1,
 	output reg ch1_mux1,
 	
-	output reg dir_com_cyt,
+	output reg dir_com_c,
+	output reg dir_com_t,
+	output reg dir_tim_en,
+	output reg dir_tim_mask,
 	
 	output reg dir_seg,
 	output reg dir_min,
@@ -48,6 +55,9 @@ module FSM_ESC_RTC(
 	output reg dat_esc_seg_tim,
 	output reg dat_esc_min_tim,
 	output reg dat_esc_hora_tim,
+	
+	output reg dat_tim_en,
+	output reg dat_tim_mask,
 	
 	output reg buffer_activo
    );
@@ -72,6 +82,7 @@ module FSM_ESC_RTC(
 		.send_add(send_add)
 	);
 	
+		
 	/* Estados. */
 	localparam est0 = 1'b0, est1 = 1'b1;
 	
@@ -94,8 +105,6 @@ module FSM_ESC_RTC(
 	always @(posedge clk, posedge reset) begin
 		if (reset) begin
 			est_act <= est0;
-		/*end else if (contador == 431) begin*
-			est_act <= est0;*/
 		end else begin
 			est_act <= est_sig;
 		end
@@ -131,12 +140,15 @@ module FSM_ESC_RTC(
 			w_r = 1;
 			ch0_mux1 = 0;
 			ch1_mux1 = 0;
-			
 			buffer_activo = 0;
-					
+			
 			do_it = 0;
 			
-			dir_com_cyt = 0;
+			dir_com_c = 0;
+			dir_com_t = 0;
+			dir_tim_en = 0;
+			dir_tim_mask = 0;
+			
 			dir_seg = 0;
 			dir_min = 0;
 			dir_hora = 0;
@@ -156,8 +168,10 @@ module FSM_ESC_RTC(
 			dat_esc_seg_tim = 0;
 			dat_esc_min_tim = 0;
 			dat_esc_hora_tim = 0;
-		end
-		else if (est_act == est1) begin
+			
+			dat_tim_en = 0;
+			dat_tim_mask = 0;
+		end else if (est_act == est1) begin
 			w_r = 1;
 			
 			do_it = 1;
@@ -176,8 +190,9 @@ module FSM_ESC_RTC(
 				dat_esc_seg_tim = 0;
 				dat_esc_min_tim = 0;
 				dat_esc_hora_tim = 0;
-				if (contador > 387) begin
-					dir_com_cyt = 1;
+				dat_tim_mask = 0;
+				dat_tim_en = 0;
+				if (contador > 215) begin
 					dir_seg = 0;
 					dir_min = 0;
 					dir_hora = 0;
@@ -187,106 +202,211 @@ module FSM_ESC_RTC(
 					dir_seg_tim = 0;
 					dir_min_tim = 0;
 					dir_hora_tim = 0;
-				end else	if (contador > 344) begin
-					dir_com_cyt = 0;
-					dir_seg = 0;
-					dir_min = 0;
-					dir_hora = 0;
-					dir_dia = 0;
-					dir_mes = 0;
-					dir_anio = 0;
-					dir_seg_tim = 0;
-					dir_min_tim = 0;
-					dir_hora_tim = 1;
-				end else	if (contador > 301) begin
-					dir_com_cyt = 0;
-					dir_seg = 0;
-					dir_min = 0;
-					dir_hora = 0;
-					dir_dia = 0;
-					dir_mes = 0;
-					dir_anio = 0;
-					dir_seg_tim = 0;
-					dir_min_tim = 1;
-					dir_hora_tim = 0;
-				end else if (contador > 258) begin
-					dir_com_cyt = 0;
-					dir_seg = 0;
-					dir_min = 0;
-					dir_hora = 0;
-					dir_dia = 0;
-					dir_mes = 0;
-					dir_anio = 0;
-					dir_seg_tim = 1;
-					dir_min_tim = 0;
-					dir_hora_tim = 0;
-				end else if (contador > 215) begin
-					dir_com_cyt = 0;
-					dir_seg = 0;
-					dir_min = 0;
-					dir_hora = 0;
-					dir_dia = 0;
-					dir_mes = 0;
-					dir_anio = 1;
-					dir_seg_tim = 0;
-					dir_min_tim = 0;
-					dir_hora_tim = 0;
+					dir_tim_mask = 0;
+					dir_com_t = 0;
+					if (estado_hora) begin
+						dir_com_c = 1;
+						dir_tim_en = 0;
+					end else if (estado_fecha) begin
+						dir_com_c = 1;
+						dir_tim_en = 0;
+					end else if (estado_timer) begin
+						dir_com_c = 0;
+						dir_tim_en = 1;
+					end else begin
+						dir_com_c = 0;
+						dir_tim_en = 0;
+					end
 				end else if (contador > 172) begin
-					dir_com_cyt = 0;
 					dir_seg = 0;
 					dir_min = 0;
 					dir_hora = 0;
 					dir_dia = 0;
-					dir_mes = 1;
+					dir_mes = 0;
 					dir_anio = 0;
 					dir_seg_tim = 0;
 					dir_min_tim = 0;
 					dir_hora_tim = 0;
+					dir_tim_mask = 0;
+					dir_tim_en = 0;
+					if (estado_hora) begin
+						dir_com_c = 1;
+						dir_com_t = 0;
+					end else if (estado_fecha) begin
+						dir_com_c = 1;
+						dir_com_t = 0;
+					end else if (estado_timer) begin
+						dir_com_c = 0;
+						dir_com_t = 1;
+					end else begin
+						dir_com_c = 0;
+						dir_com_t = 0;
+					end
 				end else if (contador > 129) begin
-					dir_com_cyt = 0;
 					dir_seg = 0;
 					dir_min = 0;
 					dir_hora = 0;
-					dir_dia = 1;
+					dir_dia = 0;
 					dir_mes = 0;
 					dir_anio = 0;
 					dir_seg_tim = 0;
 					dir_min_tim = 0;
 					dir_hora_tim = 0;
+					dir_com_t = 0;
+					dir_tim_en = 0;
+					if (estado_hora) begin
+						dir_com_c = 1;
+						dir_tim_mask = 0;
+					end else if (estado_fecha) begin
+						dir_com_c = 1;
+						dir_tim_mask = 0;
+					end else if (estado_timer) begin
+						dir_com_c = 0;
+						dir_tim_mask = 1;
+					end else begin
+						dir_com_c = 0;
+						dir_tim_mask = 0;
+					end
 				end else if (contador > 86) begin
-					dir_com_cyt = 0;
-					dir_seg = 0;
-					dir_min = 0;
-					dir_hora = 1;
-					dir_dia = 0;
-					dir_mes = 0;
-					dir_anio = 0;
-					dir_seg_tim = 0;
-					dir_min_tim = 0;
-					dir_hora_tim = 0;
+					dir_tim_mask = 0;
+					dir_com_c = 0;
+					dir_com_t = 0;
+					dir_tim_en = 0;
+					if (estado_hora) begin
+						dir_seg = 0;
+						dir_min = 0;
+						dir_hora = 1;
+						dir_dia = 0;
+						dir_mes = 0;
+						dir_anio = 0;
+						dir_seg_tim = 0;
+						dir_min_tim = 0;
+						dir_hora_tim = 0;
+					end else if (estado_fecha) begin
+						dir_seg = 0;
+						dir_min = 0;
+						dir_hora = 0;
+						dir_dia = 0;
+						dir_mes = 0;
+						dir_anio = 1;
+						dir_seg_tim = 0;
+						dir_min_tim = 0;
+						dir_hora_tim = 0;
+					end else if (estado_timer) begin
+						dir_seg = 0;
+						dir_min = 0;
+						dir_hora = 0;
+						dir_dia = 0;
+						dir_mes = 0;
+						dir_anio = 0;
+						dir_seg_tim = 0;
+						dir_min_tim = 0;
+						dir_hora_tim = 1;
+					end else begin
+						dir_seg = 0;
+						dir_min = 0;
+						dir_hora = 0;
+						dir_dia = 0;
+						dir_mes = 0;
+						dir_anio = 0;
+						dir_seg_tim = 0;
+						dir_min_tim = 0;
+						dir_hora_tim = 0;
+					end
 				end else if (contador > 43) begin
-					dir_com_cyt = 0;
-					dir_seg = 0;
-					dir_min = 1;
-					dir_hora = 0;
-					dir_dia = 0;
-					dir_mes = 0;
-					dir_anio = 0;
-					dir_seg_tim = 0;
-					dir_min_tim = 0;
-					dir_hora_tim = 0;
+					dir_tim_mask = 0;
+					dir_com_c = 0;
+					dir_com_t = 0;
+					dir_tim_en = 0;
+					if (estado_hora) begin
+						dir_seg = 0;
+						dir_min = 1;
+						dir_hora = 0;
+						dir_dia = 0;
+						dir_mes = 0;
+						dir_anio = 0;
+						dir_seg_tim = 0;
+						dir_min_tim = 0;
+						dir_hora_tim = 0;
+					end else if (estado_fecha) begin
+						dir_seg = 0;
+						dir_min = 0;
+						dir_hora = 0;
+						dir_dia = 0;
+						dir_mes = 1;
+						dir_anio = 0;
+						dir_seg_tim = 0;
+						dir_min_tim = 0;
+						dir_hora_tim = 0;
+					end else if (estado_timer) begin
+						dir_seg = 0;
+						dir_min = 0;
+						dir_hora = 0;
+						dir_dia = 0;
+						dir_mes = 0;
+						dir_anio = 0;
+						dir_seg_tim = 0;
+						dir_min_tim = 1;
+						dir_hora_tim = 0;
+					end else begin
+						dir_seg = 0;
+						dir_min = 0;
+						dir_hora = 0;
+						dir_dia = 0;
+						dir_mes = 0;
+						dir_anio = 0;
+						dir_seg_tim = 0;
+						dir_min_tim = 0;
+						dir_hora_tim = 0;
+					end
 				end else begin
-					dir_com_cyt = 0;
-					dir_seg = 1;
-					dir_min = 0;
-					dir_hora = 0;
-					dir_dia = 0;
-					dir_mes = 0;
-					dir_anio = 0;
-					dir_seg_tim = 0;
-					dir_min_tim = 0;
-					dir_hora_tim = 0;
+					dir_com_c = 0;
+					dir_com_t = 0;
+					dir_tim_mask = 0;
+					dir_tim_en = 0;
+					if (estado_hora) begin
+						dir_seg = 1;
+						dir_min = 0;
+						dir_hora = 0;
+						dir_dia = 0;
+						dir_mes = 0;
+						dir_anio = 0;
+						dir_seg_tim = 0;
+						dir_min_tim = 0;
+						dir_hora_tim = 0;
+					end else if (estado_fecha) begin
+						dir_seg = 0;
+						dir_min = 0;
+						dir_hora = 0;
+						dir_dia = 1;
+						dir_mes = 0;
+						dir_anio = 0;
+						dir_seg_tim = 0;
+						dir_min_tim = 0;
+						dir_hora_tim = 0;
+					end else begin if (estado_timer) begin
+						dir_seg = 0;
+						dir_min = 0;
+						dir_hora = 0;
+						dir_dia = 0;
+						dir_mes = 0;
+						dir_anio = 0;
+						dir_seg_tim = 1;
+						dir_min_tim = 0;
+						dir_hora_tim = 0;
+					end else begin
+						dir_seg = 0;
+						dir_min = 0;
+						dir_hora = 0;
+						dir_dia = 0;
+						dir_mes = 0;
+						dir_anio = 0;
+						dir_seg_tim = 0;
+						dir_min_tim = 0;
+						dir_hora_tim = 0;
+					end
 				end
+			end
 			end else if (send_data && (~send_add) && (~read_data)) begin
 				buffer_activo = 1;
 				
@@ -299,9 +419,9 @@ module FSM_ESC_RTC(
 				dir_seg_tim = 0;
 				dir_min_tim = 0;
 				dir_hora_tim = 0;
-				if (contador > 387) begin
-					dir_com_cyt = 1;
-										
+				dir_tim_mask = 0;
+				dir_tim_en = 0;
+				if (contador > 215) begin
 					ch0_mux1 = 1;
 					ch1_mux1 = 0;
 					
@@ -314,147 +434,234 @@ module FSM_ESC_RTC(
 					dat_esc_seg_tim = 0;
 					dat_esc_min_tim = 0;
 					dat_esc_hora_tim = 0;
-				end else	if (contador > 344) begin
-					dir_com_cyt = 0;
-					
-					ch0_mux1 = 0;
-					ch1_mux1 = 1;
-					
-					dat_esc_seg = 0;
-					dat_esc_min = 0;
-					dat_esc_hora = 0;
-					dat_esc_dia = 0;
-					dat_esc_mes = 0;
-					dat_esc_anio = 0;
-					dat_esc_seg_tim = 0;
-					dat_esc_min_tim = 0;
-					dat_esc_hora_tim = 1;
-				end else	if (contador > 301) begin
-					dir_com_cyt = 0;
-					
-					ch0_mux1 = 0;
-					ch1_mux1 = 1;
-					
-					dat_esc_seg = 0;
-					dat_esc_min = 0;
-					dat_esc_hora = 0;
-					dat_esc_dia = 0;
-					dat_esc_mes = 0;
-					dat_esc_anio = 0;
-					dat_esc_seg_tim = 0;
-					dat_esc_min_tim = 1;
-					dat_esc_hora_tim = 0;
-				end else if (contador > 258) begin
-					dir_com_cyt = 0;
-					
-					ch0_mux1 = 0;
-					ch1_mux1 = 1;
-					
-					dat_esc_seg = 0;
-					dat_esc_min = 0;
-					dat_esc_hora = 0;
-					dat_esc_dia = 0;
-					dat_esc_mes = 0;
-					dat_esc_anio = 0;
-					dat_esc_seg_tim = 1;
-					dat_esc_min_tim = 0;
-					dat_esc_hora_tim = 0;
-				end else if (contador > 215) begin
-					dir_com_cyt = 0;
-					
-					ch0_mux1 = 0;
-					ch1_mux1 = 1;
-					
-					dat_esc_seg = 0;
-					dat_esc_min = 0;
-					dat_esc_hora = 0;
-					dat_esc_dia = 0;
-					dat_esc_mes = 0;
-					dat_esc_anio = 1;
-					dat_esc_seg_tim = 0;
-					dat_esc_min_tim = 0;
-					dat_esc_hora_tim = 0;
+					dir_com_t = 0;
+					dat_tim_mask = 0;
+					if (estado_hora) begin
+						dir_com_c = 1;
+						dat_tim_en = 0;
+					end else if (estado_fecha) begin
+						dir_com_c = 1;
+						dat_tim_en = 0;
+					end else if (estado_timer) begin
+						dat_tim_en = 1;
+						dir_com_c = 0;
+					end else begin
+						dat_tim_en = 0;
+						dir_com_c = 0;
+					end
 				end else if (contador > 172) begin
-					dir_com_cyt = 0;
-					
-					ch0_mux1 = 0;
-					ch1_mux1 = 1;
+					ch0_mux1 = 1;
+					ch1_mux1 = 0;
 					
 					dat_esc_seg = 0;
 					dat_esc_min = 0;
 					dat_esc_hora = 0;
 					dat_esc_dia = 0;
-					dat_esc_mes = 1;
+					dat_esc_mes = 0;
 					dat_esc_anio = 0;
 					dat_esc_seg_tim = 0;
 					dat_esc_min_tim = 0;
 					dat_esc_hora_tim = 0;
+					dat_tim_mask = 0;
+					dat_tim_en = 0;
+					if (estado_hora) begin
+						dir_com_t = 0;
+						dir_com_c = 1;
+					end else if (estado_fecha) begin
+						dir_com_t = 0;
+						dir_com_c = 1;
+					end else if (estado_timer) begin
+						dir_com_t = 1;
+						dir_com_c = 0;
+					end else begin
+						dir_com_t = 0;
+						dir_com_c = 0;
+					end
 				end else if (contador > 129) begin
-					dir_com_cyt = 0;
-					
-					ch0_mux1 = 0;
-					ch1_mux1 = 1;
+					ch0_mux1 = 1;
+					ch1_mux1 = 0;
 					
 					dat_esc_seg = 0;
 					dat_esc_min = 0;
 					dat_esc_hora = 0;
-					dat_esc_dia = 1;
+					dat_esc_dia = 0;
 					dat_esc_mes = 0;
 					dat_esc_anio = 0;
 					dat_esc_seg_tim = 0;
 					dat_esc_min_tim = 0;
 					dat_esc_hora_tim = 0;
+					dir_com_t = 0;
+					dat_tim_en = 0;
+					if (estado_hora) begin
+						dat_tim_mask = 0;
+						dir_com_c = 1;
+					end else if (estado_fecha) begin
+						dat_tim_mask = 0;
+						dir_com_c = 1;
+					end else if (estado_timer) begin
+						dat_tim_mask = 1;
+						dir_com_c = 0;
+					end else begin
+						dat_tim_mask = 0;
+						dir_com_c = 0;
+					end
 				end else if (contador > 86) begin
-					dir_com_cyt = 0;
 					
 					ch0_mux1 = 0;
 					ch1_mux1 = 1;
 					
-					dat_esc_seg = 0;
-					dat_esc_min = 0;
-					dat_esc_hora = 1;
-					dat_esc_dia = 0;
-					dat_esc_mes = 0;
-					dat_esc_anio = 0;
-					dat_esc_seg_tim = 0;
-					dat_esc_min_tim = 0;
-					dat_esc_hora_tim = 0;
+					dir_com_c = 0;
+					dir_com_t = 0;
+					dat_tim_mask = 0;
+					dat_tim_en = 0;
+					if (estado_hora) begin
+						dat_esc_seg = 0;
+						dat_esc_min = 0;
+						dat_esc_hora = 1;
+						dat_esc_dia = 0;
+						dat_esc_mes = 0;
+						dat_esc_anio = 0;
+						dat_esc_seg_tim = 0;
+						dat_esc_min_tim = 0;
+						dat_esc_hora_tim = 0;
+					end else if (estado_fecha) begin
+						dat_esc_seg = 0;
+						dat_esc_min = 0;
+						dat_esc_hora = 0;
+						dat_esc_dia = 0;
+						dat_esc_mes = 0;
+						dat_esc_anio = 1;
+						dat_esc_seg_tim = 0;
+						dat_esc_min_tim = 0;
+						dat_esc_hora_tim = 0;
+					end else if (estado_timer) begin
+						dat_esc_seg = 0;
+						dat_esc_min = 0;
+						dat_esc_hora = 0;
+						dat_esc_dia = 0;
+						dat_esc_mes = 0;
+						dat_esc_anio = 0;
+						dat_esc_seg_tim = 0;
+						dat_esc_min_tim = 0;
+						dat_esc_hora_tim = 1;
+					end else begin
+						dat_esc_seg = 0;
+						dat_esc_min = 0;
+						dat_esc_hora = 0;
+						dat_esc_dia = 0;
+						dat_esc_mes = 0;
+						dat_esc_anio = 0;
+						dat_esc_seg_tim = 0;
+						dat_esc_min_tim = 0;
+						dat_esc_hora_tim = 0;
+					end
 				end else if (contador > 43) begin
-					dir_com_cyt = 0;
 					
 					ch0_mux1 = 0;
 					ch1_mux1 = 1;
-					
-					dat_esc_seg = 0;
-					dat_esc_min = 1;
-					dat_esc_hora = 0;
-					dat_esc_dia = 0;
-					dat_esc_mes = 0;
-					dat_esc_anio = 0;
-					dat_esc_seg_tim = 0;
-					dat_esc_min_tim = 0;
-					dat_esc_hora_tim = 0;
+					dir_com_c = 0;
+					dir_com_t = 0;
+					dat_tim_mask = 0;
+					dat_tim_en = 0;
+					if (estado_hora) begin
+						dat_esc_seg = 0;
+						dat_esc_min = 1;
+						dat_esc_hora = 0;
+						dat_esc_dia = 0;
+						dat_esc_mes = 0;
+						dat_esc_anio = 0;
+						dat_esc_seg_tim = 0;
+						dat_esc_min_tim = 0;
+						dat_esc_hora_tim = 0;
+					end else if (estado_fecha) begin
+						dat_esc_seg = 0;
+						dat_esc_min = 0;
+						dat_esc_hora = 0;
+						dat_esc_dia = 0;
+						dat_esc_mes = 1;
+						dat_esc_anio = 0;
+						dat_esc_seg_tim = 0;
+						dat_esc_min_tim = 0;
+						dat_esc_hora_tim = 0;
+					end else if (estado_timer) begin
+						dat_esc_seg = 0;
+						dat_esc_min = 0;
+						dat_esc_hora = 0;
+						dat_esc_dia = 0;
+						dat_esc_mes = 0;
+						dat_esc_anio = 0;
+						dat_esc_seg_tim = 0;
+						dat_esc_min_tim = 1;
+						dat_esc_hora_tim = 0;
+					end else begin
+						dat_esc_seg = 0;
+						dat_esc_min = 0;
+						dat_esc_hora = 0;
+						dat_esc_dia = 0;
+						dat_esc_mes = 0;
+						dat_esc_anio = 0;
+						dat_esc_seg_tim = 0;
+						dat_esc_min_tim = 0;
+						dat_esc_hora_tim = 0;
+					end
 				end else begin
-					dir_com_cyt = 0;
-					
+									
 					ch0_mux1 = 0;
 					ch1_mux1 = 1;
-					
-					dat_esc_seg = 1;
-					dat_esc_min = 0;
-					dat_esc_hora = 0;
-					dat_esc_dia = 0;
-					dat_esc_mes = 0;
-					dat_esc_anio = 0;
-					dat_esc_seg_tim = 0;
-					dat_esc_min_tim = 0;
-					dat_esc_hora_tim = 0;
+					dir_com_c = 0;
+					dir_com_t = 0;
+					dat_tim_mask = 0;
+					dat_tim_en = 0;
+					if (estado_hora) begin
+						dat_esc_seg = 1;
+						dat_esc_min = 0;
+						dat_esc_hora = 0;
+						dat_esc_dia = 0;
+						dat_esc_mes = 0;
+						dat_esc_anio = 0;
+						dat_esc_seg_tim = 0;
+						dat_esc_min_tim = 0;
+						dat_esc_hora_tim = 0;
+					end else if (estado_fecha) begin
+						dat_esc_seg = 0;
+						dat_esc_min = 0;
+						dat_esc_hora = 0;
+						dat_esc_dia = 1;
+						dat_esc_mes = 0;
+						dat_esc_anio = 0;
+						dat_esc_seg_tim = 0;
+						dat_esc_min_tim = 0;
+						dat_esc_hora_tim = 0;
+					end else if (estado_timer) begin
+						dat_esc_seg = 0;
+						dat_esc_min = 0;
+						dat_esc_hora = 0;
+						dat_esc_dia = 0;
+						dat_esc_mes = 0;
+						dat_esc_anio = 0;
+						dat_esc_seg_tim = 1;
+						dat_esc_min_tim = 0;
+						dat_esc_hora_tim = 0;
+					end else begin
+						dat_esc_seg = 0;
+						dat_esc_min = 0;
+						dat_esc_hora = 0;
+						dat_esc_dia = 0;
+						dat_esc_mes = 0;
+						dat_esc_anio = 0;
+						dat_esc_seg_tim = 0;
+						dat_esc_min_tim = 0;
+						dat_esc_hora_tim = 0;
+					end
 				end
 			end else begin
 				buffer_activo = 0;
 				ch0_mux1 = 0;
 				ch1_mux1 = 0;
-				dir_com_cyt = 0;
+				dir_com_c = 0;
+				dir_com_t = 0;
+				dir_tim_en = 0;
+				dir_tim_mask = 0;
 				
 				dir_seg = 0;
 				dir_min = 0;
@@ -475,6 +682,9 @@ module FSM_ESC_RTC(
 				dat_esc_seg_tim = 0;
 				dat_esc_min_tim = 0;
 				dat_esc_hora_tim = 0;
+				
+				dat_tim_en = 0;
+				dat_tim_mask = 0;
 			end
 		end else begin
 			w_r = 1;
@@ -484,7 +694,10 @@ module FSM_ESC_RTC(
 			
 			do_it = 0;
 			
-			dir_com_cyt = 0;
+			dir_com_c = 0;
+			dir_com_t = 0;
+			dir_tim_en = 0;
+			dir_tim_mask = 0;
 			
 			dir_seg = 0;
 			dir_min = 0;
@@ -505,7 +718,9 @@ module FSM_ESC_RTC(
 			dat_esc_seg_tim = 0;
 			dat_esc_min_tim = 0;
 			dat_esc_hora_tim = 0;
+			
+			dat_tim_en = 0;
+			dat_tim_mask = 0;
 		end
 	end
-	
 endmodule

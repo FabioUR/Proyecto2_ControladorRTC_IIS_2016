@@ -37,7 +37,12 @@ module FSM_GENERAL(
 	output wire dat_esc_zero_g,
 	
 	output wire dir_st2_g,
-	output wire dir_com_cyt_g, ////
+	output wire dir_com_cyt_g,
+	output wire dir_com_c_g,
+	output wire dir_com_t_g,
+	output wire dir_tim_mask_g,
+	output wire dir_tim_en_g,
+	
 	output wire dir_seg_g, ////
 	output wire dir_min_g, ////
 	output wire dir_hora_g, ////
@@ -67,6 +72,9 @@ module FSM_GENERAL(
 	output wire dat_esc_seg_tim_g,
 	output wire dat_esc_min_tim_g,
 	output wire dat_esc_hora_tim_g,
+	
+	output wire dat_tim_mask_g,
+	output wire dat_tim_en_g,
 	
 	output reg en_contadores_hora_g,
 	output reg en_contadores_fecha_g,
@@ -148,16 +156,31 @@ module FSM_GENERAL(
 	reg do_it_esc_g;
 	wire a_d_e, cs_e, rd_e, wr_e, ch0_mux1_e, ch1_mux1_e, buffer_activo_e;
 	
-	wire dir_com_cyt_e, dir_seg_e, dir_min_e, dir_hora_e, dir_dia_e, dir_mes_e,
+	wire dir_com_c_e, dir_com_t_e, dir_seg_e, dir_min_e, dir_hora_e, dir_dia_e, dir_mes_e,
 		dir_anio_e, dir_seg_tim_e, dir_min_tim_e, dir_hora_tim_e;
+	
+	wire dir_tim_en_e, dir_tim_mask_e;
 		
 	wire dat_esc_seg_e, dat_esc_min_e, dat_esc_hora_e, dat_esc_dia_e, dat_esc_mes_e,
 		dat_esc_anio_e, dat_esc_seg_tim_e, dat_esc_min_tim_e, dat_esc_hora_tim_e;
+	
+	wire dat_tim_en_e, dat_tim_mask_e;
+	
+	/*reg est_hora_p, est_fecha_p, est_timer_p;
+	reg est_hora_s, est_fecha_s, est_timer_s;*/
+	
+	reg est_hora, est_fecha, est_timer;
 	
 	FSM_ESC_RTC Escritura(
 		.clk(clk),
 		.reset(reset),
 		.do_it_esc(do_it_esc_g),
+		/*.estado_hora(est_hora_p),
+		.estado_fecha(est_fecha_p),
+		.estado_timer(est_timer_p),*/
+		.estado_hora(est_hora),
+		.estado_fecha(est_fecha),
+		.estado_timer(est_timer),
 		.a_d(a_d_e),
 		.cs(cs_e),
 		.rd(rd_e),
@@ -165,7 +188,10 @@ module FSM_GENERAL(
 		.ch0_mux1(ch0_mux1_e),
 		.ch1_mux1(ch1_mux1_e),
 		.buffer_activo(buffer_activo_e),
-		.dir_com_cyt(dir_com_cyt_e),
+		.dir_com_c(dir_com_c_e),
+		.dir_com_t(dir_com_t_e),
+		.dir_tim_en(dir_tim_en_e),
+		.dir_tim_mask(dir_tim_mask_e),
 		.dir_seg(dir_seg_e),
 		.dir_min(dir_min_e),
 		.dir_hora(dir_hora_e),
@@ -183,7 +209,9 @@ module FSM_GENERAL(
 		.dat_esc_anio(dat_esc_anio_e),
 		.dat_esc_seg_tim(dat_esc_seg_tim_e),
 		.dat_esc_min_tim(dat_esc_min_tim_e),
-		.dat_esc_hora_tim(dat_esc_hora_tim_e)
+		.dat_esc_hora_tim(dat_esc_hora_tim_e),
+		.dat_tim_mask(dat_tim_mask_e),
+		.dat_tim_en(dat_tim_en_e)
 	);
 	
 	/* Estados. */
@@ -191,6 +219,7 @@ module FSM_GENERAL(
 	
 	reg [2:0] est_sig;
 	reg [2:0] est_act;
+	reg [2:0] est_pas;
 	
 	reg [9:0] contador;
 	
@@ -246,67 +275,160 @@ module FSM_GENERAL(
 		end
 	end
 	
+	always @(posedge clk, posedge reset) begin
+		if (reset) begin
+			est_pas <= est0;
+		end else if (est_act == est_sig) begin
+			est_pas <= est_pas;
+		end else begin
+			est_pas <= est_act;
+		end
+	end
+	
+	/*always @(posedge clk, posedge reset) begin
+		if (reset) begin
+			est_hora_p <= est_hora_s;
+		end else begin
+			est_hora_p <= est_hora_s;
+		end
+	end
+	
+	always @(posedge clk, posedge reset) begin
+		if (reset) begin
+			est_timer_p <= est_timer_s;
+		end else begin
+			est_timer_p <= est_timer_s;
+		end
+	end
+	
+	always @(posedge clk, posedge reset) begin
+		if (reset) begin
+			est_fecha_p <= est_fecha_s;
+		end else begin
+			est_fecha_p <= est_fecha_s;
+		end
+	end*/
+	
 	/* Lógica Combinacional */
 	
 	always @* begin
 		est_sig = est0;
+		/*est_hora_s = 0;
+		est_fecha_s = 0;
+		est_timer_s = 0;*/
 		case(est_act)
 			est0: begin
 				if (contador == 517) begin // Lo que tarda la inicialización.
 					est_sig = est1;
+					/*est_timer_s = 0;
+					est_fecha_s = 0;
+					est_hora_s = 0;*/
 				end else begin
 					est_sig = est0;
+					/*est_timer_s = 0;
+					est_fecha_s = 0;
+					est_hora_s = 0;*/
 				end
 			end
 			est1: begin
 				if (contador1 == 431) begin // Lo que tarda una lectura completa.
 					est_sig = est2;
+					/*est_timer_s = 0;
+					est_fecha_s = 0;
+					est_hora_s = 0;*/
 				end else begin
 					est_sig = est1;
+					/*est_timer_s = 0;
+					est_fecha_s = 0;
+					est_hora_s = 0;*/
 				end
 			end
 			est2: begin
 				if (S0) begin
 					est_sig = est4;
+					/*est_timer_s = 0;
+					est_fecha_s = 0;
+					est_hora_s = 0;*/
 				end else if (S1) begin
 					est_sig = est3;
+					/*est_timer_s = 0;
+					est_fecha_s = 0;
+					est_hora_s = 0;*/
 				end else if (S2) begin
 					est_sig = est5;
+					/*est_timer_s = 0;
+					est_fecha_s = 0;
+					est_hora_s = 0;*/
 				end else if(contador2 == 1599569) begin // Se espera aprox 16ms  para esperar un pantallazo de la VGA.
 					est_sig = est1;
+					/*est_timer_s = 0;
+					est_fecha_s = 0;
+					est_hora_s = 0;*/
 				end else begin
 					est_sig = est2;
+					/*est_timer_s = 0;
+					est_fecha_s = 0;
+					est_hora_s = 0;*/
 				end
 			end
 			est3: begin
 				if (~S1) begin
 					est_sig = est6;
+					/*est_timer_s = 0;
+					est_fecha_s = 0;
+					est_hora_s = 1;*/
 				end else begin
 					est_sig = est3;
+					/*est_timer_s = 0;
+					est_fecha_s = 0;
+					est_hora_s = 0;*/
 				end
 			end
 			est4: begin
 				if (~S0) begin
 					est_sig = est6;
+					/*est_timer_s = 0;
+					est_fecha_s = 1;
+					est_hora_s = 0;*/
 				end else begin
 					est_sig = est4;
+					/*est_timer_s = 0;
+					est_fecha_s = 0;
+					est_hora_s = 0;*/
 				end
 			end
 			est5: begin
 				if (~S2) begin
 					est_sig = est6;
+					/*est_timer_s = 1;
+					est_fecha_s = 0;
+					est_hora_s = 0;*/
 				end else begin
 					est_sig = est5;
+					/*est_timer_s = 0;
+					est_fecha_s = 0;
+					est_hora_s = 0;*/
 				end
 			end
 			est6: begin
-				if (contador6 == 431) begin
+				if (contador6 == 259) begin
 					est_sig = est1;
+					/*est_hora_s = est_hora_p;
+					est_timer_s = est_timer_p;
+					est_fecha_s = est_fecha_p;*/
 				end else begin
 					est_sig = est6;
+					/*est_hora_s = est_hora_p;
+					est_timer_s = est_timer_p;
+					est_fecha_s = est_fecha_p;*/
 				end
 			end
-			default: est_sig = est0;
+			default: begin
+				est_sig = est0;
+				/*est_timer_s = 0;
+				est_fecha_s = 0;
+				est_hora_s = 0;*/
+			end
 		endcase
 	end
 	
@@ -321,6 +443,9 @@ module FSM_GENERAL(
 			en_contadores_timer_g = 0;
 			do_it_esc_g = 0;
 			ch0_mux2_g = 0;
+			est_hora = 0;
+				est_fecha = 0;
+				est_timer = 0;
 		end
 		else if (est_act == est1) begin
 			do_it_inic = 0;
@@ -330,6 +455,9 @@ module FSM_GENERAL(
 			en_contadores_timer_g = 0;
 			do_it_esc_g = 0;
 			ch0_mux2_g = 0;
+			est_hora = 0;
+				est_fecha = 0;
+				est_timer = 0;
 		end else if (est_act == est2) begin
 			do_it_inic = 0;
 			do_it_leer = 0;
@@ -338,6 +466,9 @@ module FSM_GENERAL(
 			en_contadores_timer_g = 0;
 			do_it_esc_g = 0;
 			ch0_mux2_g = 0;
+			est_hora = 0;
+				est_fecha = 0;
+				est_timer = 0;
 		end else if (est_act == est3) begin
 			do_it_inic = 0;
 			do_it_leer = 0;
@@ -346,6 +477,9 @@ module FSM_GENERAL(
 			en_contadores_timer_g = 0;
 			do_it_esc_g = 0;
 			ch0_mux2_g = 1;
+			est_hora = 0;
+				est_fecha = 0;
+				est_timer = 0;
 		end else if (est_act == est4) begin
 			do_it_inic = 0;
 			do_it_leer = 0;
@@ -354,6 +488,9 @@ module FSM_GENERAL(
 			en_contadores_timer_g = 0;
 			do_it_esc_g = 0;
 			ch0_mux2_g = 1;
+			est_hora = 0;
+				est_fecha = 0;
+				est_timer = 0;
 		end else if (est_act == est5) begin
 			do_it_inic = 0;
 			do_it_leer = 0;
@@ -362,6 +499,9 @@ module FSM_GENERAL(
 			en_contadores_timer_g = 1;
 			do_it_esc_g = 0;
 			ch0_mux2_g = 1;
+			est_hora = 0;
+				est_fecha = 0;
+				est_timer = 0;
 		end else if (est_act == est6) begin
 			do_it_inic = 0;
 			do_it_leer = 0;
@@ -370,6 +510,23 @@ module FSM_GENERAL(
 			en_contadores_timer_g = 0;
 			do_it_esc_g = 1;
 			ch0_mux2_g = 0;
+			if (est_pas == est3) begin
+				est_hora = 1;
+				est_fecha = 0;
+				est_timer = 0;
+			end else if (est_pas == est4) begin
+				est_hora = 0;
+				est_fecha = 1;
+				est_timer = 0;
+			end else if (est_pas == est5) begin
+				est_hora = 0;
+				est_fecha = 0;
+				est_timer = 1;
+			end else begin
+				est_hora = 0;
+				est_fecha = 0;
+				est_timer = 0;
+			end
 		end else begin
 			do_it_inic = 0;
 			do_it_leer = 0;
@@ -378,6 +535,9 @@ module FSM_GENERAL(
 			en_contadores_timer_g = 0;
 			do_it_esc_g = 0;
 			ch0_mux2_g = 0;
+			est_hora = 0;
+				est_fecha = 0;
+				est_timer = 0;
 		end
 	end
 	
@@ -389,6 +549,10 @@ module FSM_GENERAL(
 	assign dat_esc_zero_g = dat_esc_zero_i;
 	
 	assign dir_st2_g = dir_st2_i;
+	assign dir_com_c_g = dir_com_c_e;
+	assign dir_com_t_g = dir_com_t_e;
+	assign dir_tim_en_g = dir_tim_en_e;
+	assign dir_tim_mask_g = dir_tim_mask_e;
 	
 	assign dat_lect_seg_g = dat_lect_seg_l;
 	assign dat_lect_min_g = dat_lect_min_l;
@@ -410,6 +574,9 @@ module FSM_GENERAL(
 	assign dat_esc_min_tim_g = dat_esc_min_tim_e;
 	assign dat_esc_hora_tim_g = dat_esc_hora_tim_e;
 	
+	assign dat_tim_en_g = dat_tim_en_e;
+	assign dat_tim_mask_g = dat_tim_mask_e;
+	
 	
 	assign a_d_g = (est_act == 0) ? a_d_i : ((est_act == 1) ? a_d_l : a_d_e);
 	assign cs_g = (est_act == 0) ? cs_i: ((est_act == 1) ? cs_l : cs_e);
@@ -417,7 +584,7 @@ module FSM_GENERAL(
 	assign wr_g = (est_act == 0) ? wr_i : ((est_act == 1) ? wr_l : wr_e);
 	assign ch0_mux1_g = (est_act == 0) ? ch0_mux1_i : ((est_act == 1) ? ch0_mux1_l : ch0_mux1_e);
 	assign buffer_activo_g = (est_act == 0) ? buffer_activo_i : ((est_act == 1) ? buffer_activo_l : buffer_activo_e);
-	assign dir_com_cyt_g = (est_act == 0) ? dir_com_cyt_i : ((est_act == 1) ? dir_com_cyt_l : dir_com_cyt_e);
+	assign dir_com_cyt_g = (est_act == 0) ? dir_com_cyt_i : dir_com_cyt_l;
 	assign dir_seg_g = (est_act == 0) ? dir_seg_i : ((est_act == 1) ? dir_seg_l : dir_seg_e);
 	assign dir_min_g = (est_act == 0) ? dir_min_i : ((est_act == 1) ? dir_min_l : dir_min_e);
 	assign dir_hora_g = (est_act == 0) ? dir_hora_i : ((est_act == 1) ? dir_hora_l : dir_hora_e);

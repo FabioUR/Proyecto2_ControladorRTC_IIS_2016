@@ -154,14 +154,15 @@ module CTRL_RTC_2(
 	wire ch0_mux1, ch1_mux1, ch0_mux2, ch1_mux2;
 	wire buf_act;
 	wire dat_esc_zero, dat_esc_init,
-		dir_st2, dir_com_cyt, dir_seg, dir_min, dir_hora, dir_dia, dir_mes, dir_anio,
-		dir_seg_tim, dir_min_tim, dir_hora_tim, 
+		dir_st2, dir_com_cyt, dir_com_c, dir_com_t, dir_seg, dir_min, dir_hora, dir_dia, dir_mes, dir_anio,
+		dir_seg_tim, dir_min_tim, dir_hora_tim, dir_tim_en, dir_tim_mask,
 		
 		dat_lect_seg, dat_lect_min, dat_lect_hora, dat_lect_dia, dat_lect_mes,
 		dat_lect_anio, dat_lect_seg_tim, dat_lect_min_tim, dat_lect_hora_tim,
 		
 		dat_esc_seg, dat_esc_min, dat_esc_hora, dat_esc_dia, dat_esc_mes,
-		dat_esc_anio, dat_esc_seg_tim, dat_esc_min_tim, dat_esc_hora_tim;
+		dat_esc_anio, dat_esc_seg_tim, dat_esc_min_tim, dat_esc_hora_tim,
+		dat_tim_en, dat_tim_mask;
 	
 	
 	
@@ -213,7 +214,13 @@ module CTRL_RTC_2(
 		.dat_esc_anio_g(dat_esc_anio),
 		.dat_esc_seg_tim_g(dat_esc_seg_tim),
 		.dat_esc_min_tim_g(dat_esc_min_tim),
-		.dat_esc_hora_tim_g(dat_esc_hora_tim)
+		.dat_esc_hora_tim_g(dat_esc_hora_tim),
+		.dir_com_c_g(dir_com_c),
+		.dir_com_t_g(dir_com_t),
+		.dir_tim_en_g(dir_tim_en),
+		.dir_tim_mask_g(dir_tim_mask),
+		.dat_tim_en_g(dat_tim_en),
+		.dat_tim_mask_g(dat_tim_mask)
 	);
 	
 	wire [7:0] dato_ctrl_data;
@@ -232,7 +239,13 @@ module CTRL_RTC_2(
 		.dir_seg_tim(dir_seg_tim),
 		.dir_min_tim(dir_min_tim),
 		.dir_hora_tim(dir_hora_tim),
-		.dato_salida(dato_ctrl_data)
+		.dato_salida(dato_ctrl_data),
+		.dir_com_c(dir_com_c),
+		.dir_com_t(dir_com_t),
+		.dir_tim_en(dir_tim_en),
+		.dir_tim_mask(dir_tim_mask),
+		.dat_tim_en(dat_tim_en),
+		.dat_tim_mask(dat_tim_mask)
 	);
 		
 	wire [7:0] dato_reg_esc;
@@ -323,6 +336,18 @@ module CTRL_RTC_2(
 		.data_out(dat_prog_hora_tim)
 	);
 	
+	wire [7:0] hora_mux3, min_mux3, seg_mux3;
+	
+	Resta_RTC Resta(
+		.hora_in(dat_prog_hora_tim),
+		.minuto_in(dat_prog_min_tim),
+		.segundo_in(dat_prog_seg_tim),
+		.hora_out(hora_mux3),
+		.minuto_out(min_mux3),
+		.segundo_out(seg_mux3)
+	);
+	
+	
 	wire [7:0] dato_mux_prog;
 	
 	MUX3 mux3(
@@ -341,9 +366,9 @@ module CTRL_RTC_2(
 		.ch3(dat_prog_dia),
 		.ch4(dat_prog_mes),
 		.ch5(dat_prog_anio),
-		.ch6(dat_prog_seg_tim),
-		.ch7(dat_prog_min_tim),
-		.ch8(dat_prog_hora_tim),
+		.ch6(seg_mux3),
+		.ch7(min_mux3),
+		.ch8(hora_mux3),
 		.y3(dato_mux_prog)
 	);
 	
@@ -451,11 +476,13 @@ module CTRL_RTC_2(
 		.y2(anio)
 	);
 	
+	wire [7:0] hora_vga, min_vga, seg_vga;
+	
 	mux2 mux2_7(
 		.ch0_mux2(ch0_mux2),
 		.ch1_mux2(ch1_mux2),
 		.ch0(dat_prog_seg_tim),
-		.ch1(seg_t_l),
+		.ch1(seg_vga),
 		.y2(seg_t)
 	);
 	
@@ -463,7 +490,7 @@ module CTRL_RTC_2(
 		.ch0_mux2(ch0_mux2),
 		.ch1_mux2(ch1_mux2),
 		.ch0(dat_prog_min_tim),
-		.ch1(min_t_l),
+		.ch1(min_vga),
 		.y2(min_t)
 	);
 	
@@ -471,8 +498,17 @@ module CTRL_RTC_2(
 		.ch0_mux2(ch0_mux2),
 		.ch1_mux2(ch1_mux2),
 		.ch0(dat_prog_hora_tim),
-		.ch1(hora_t_l),
+		.ch1(hora_vga),
 		.y2(hora_t)
+	);
+	
+	Resta_RTC RestaVGA(
+		.hora_in(hora_t_l),
+		.minuto_in(min_t_l),
+		.segundo_in(seg_t_l),
+		.hora_out(hora_vga),
+		.minuto_out(min_vga),
+		.segundo_out(seg_vga)
 	);
 	
 	wire p_t;
@@ -488,11 +524,13 @@ module CTRL_RTC_2(
 		.pixel_Y(p_y)
 	);
 	
+	wire alarma2 = ~alarma;
+	
 	Generador_Letras GenVGA(
 		.CLK(p_t),
 		.pix_x(p_x),
 		.pix_y(p_y),
-		.Alarma_on(alarma),
+		.Alarma_on(alarma2),
 		.bandera_cursor(banderas_dir),
 		/*.digit_DD(dato_rtc_lect),
 		.digit_M(dato_rtc_lect),
