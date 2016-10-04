@@ -153,7 +153,7 @@ module CTRL_RTC_2(
 	
 	wire ch0_mux1, ch1_mux1, ch0_mux2, ch1_mux2;
 	wire buf_act;
-	wire dat_esc_zero, dat_esc_init,
+	wire dat_esc_zero, dat_esc_init, dat_59,
 		dir_st2, dir_com_cyt, dir_com_c, dir_com_t, dir_seg, dir_min, dir_hora, dir_dia, dir_mes, dir_anio,
 		dir_seg_tim, dir_min_tim, dir_hora_tim, dir_tim_en, dir_tim_mask,
 		
@@ -186,6 +186,7 @@ module CTRL_RTC_2(
 		.en_contadores_timer_g(en_contadores_timer),
 		.dat_esc_init_g(dat_esc_init),
 		.dat_esc_zero_g(dat_esc_zero),
+		.dat_59_g(dat_59),
 		.dir_st2_g(dir_st2),
 		.dir_com_cyt_g(dir_com_cyt), ////
 		.dir_seg_g(dir_seg), ////
@@ -245,7 +246,8 @@ module CTRL_RTC_2(
 		.dir_tim_en(dir_tim_en),
 		.dir_tim_mask(dir_tim_mask),
 		.dat_tim_en(dat_tim_en),
-		.dat_tim_mask(dat_tim_mask)
+		.dat_tim_mask(dat_tim_mask),
+		.dat_59(dat_59)
 	);
 		
 	wire [7:0] dato_reg_esc;

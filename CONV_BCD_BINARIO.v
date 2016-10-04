@@ -49,7 +49,7 @@ module CONV_BCD_BINARIO(
 			dato_bin = 7'b0000111;
 		end
 		else if (dato_bcd == 8'h08) begin
-			dato_bin = 7'b0000111;
+			dato_bin = 7'b0001000;
 		end
 		else if (dato_bcd == 8'h09) begin
 			dato_bin = 7'b0001001;

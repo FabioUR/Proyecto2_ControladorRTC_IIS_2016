@@ -23,6 +23,7 @@ module CONTROL_DATA(
 	input wire dat_esc_zero,
 	input wire dat_tim_en,
 	input wire dat_tim_mask,
+	input wire dat_59,
 	
 	input wire dir_st2,
 	input wire dir_com_cyt,
@@ -81,7 +82,7 @@ module CONTROL_DATA(
 		end else if (dir_st2) begin
 			dato_salida = 8'h02;
 		end else if (dir_com_cyt) begin
-			dato_salida = 8'hf0;
+			dato_salida = 8'hf1;
 		end else if (dir_seg) begin
 			dato_salida = 8'h21;
 		end else if (dir_min) begin
@@ -112,6 +113,8 @@ module CONTROL_DATA(
 			dato_salida = 8'h08;
 		end else if (dat_tim_mask) begin
 			dato_salida = 8'h04;
+		end else if (dat_59) begin
+			dato_salida = 8'h59;
 		end else begin
 			dato_salida = 8'hff;
 		end

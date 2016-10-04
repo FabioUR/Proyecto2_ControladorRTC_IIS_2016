@@ -28,6 +28,7 @@ module FSM_INIC_RTC(
 	
 	output reg dat_esc_init,
 	output reg dat_esc_zero,
+	output reg dat_59,
 	
 	output reg dir_st2,
 	output reg dir_com_cyt,
@@ -140,6 +141,7 @@ module FSM_INIC_RTC(
 			dir_seg_tim = 0;
 			dir_min_tim = 0;
 			dir_hora_tim = 0;
+			dat_59 = 0;
 		end
 		else if (est_act == est1) begin
 			w_r = 1;
@@ -147,6 +149,7 @@ module FSM_INIC_RTC(
 			buffer_activo = 0;
 			
 			do_it = 1;
+			dat_59 = 0;
 			if (send_add && (~send_data) && (~read_data)) begin
 				dat_esc_init = 0;
 				dat_esc_zero = 0;
@@ -301,7 +304,7 @@ module FSM_INIC_RTC(
 				dir_st2 = 0;
 				dir_seg = 0;
 				dir_min = 0;
-				dir_hora = 0;
+				//dir_hora = 0;
 				dir_dia = 0;
 				dir_mes = 0;
 				dir_anio = 0;
@@ -315,67 +318,92 @@ module FSM_INIC_RTC(
 					
 					dat_esc_init = 0;
 					dat_esc_zero = 0;
+					dir_hora = 0;
+					dat_59 = 0;
 				end else if (contador > 430) begin
 					dir_com_cyt = 0;
 					
 					dat_esc_init = 0;
-					dat_esc_zero = 1;
+					dat_esc_zero = 0;
+					dir_hora = 1; // Para el timer se inicializa alrevés, para que no afecte la resta. 23 en hora.
+					dat_59 = 0;
 				end else if (contador > 387) begin
 					dir_com_cyt = 0;
 					
 					dat_esc_init = 0;
-					dat_esc_zero = 1;
+					dat_esc_zero = 0;
+					dir_hora = 0;
+					dat_59 = 1; // 59 en min timer.
 				end else if (contador > 344) begin
 					dir_com_cyt = 0;
 					
 					dat_esc_init = 0;
-					dat_esc_zero = 1;
+					dat_esc_zero = 0;
+					dir_hora = 0;
+					dat_59 = 1; // 59 en seg timer.
 				end else if(contador > 301) begin
 					dir_com_cyt = 0;
 					
 					dat_esc_init = 0;
 					dat_esc_zero = 1;
+					dir_hora = 0;
+					dat_59 = 0;
 				end else if (contador > 258) begin
 					dir_com_cyt = 0;
 					
 					dat_esc_init = 0;
 					dat_esc_zero = 1;
+					dir_hora = 0;
+					dat_59 = 0;
 				end else if (contador > 215) begin
 					dir_com_cyt = 0;
 					
 					dat_esc_init = 0;
 					dat_esc_zero = 1;
+					dir_hora = 0;
+					dat_59 = 0;
 				end else if (contador > 172) begin
 					dir_com_cyt = 0;
 					
 					dat_esc_init = 0;
 					dat_esc_zero = 1;
+					dir_hora = 0;
+					dat_59 = 0;
 				end else if (contador > 129) begin
 					dir_com_cyt = 0;
 					
 					dat_esc_init = 0;
 					dat_esc_zero = 1;
+					dir_hora = 0;
+					dat_59 = 0;
 				end else if (contador > 86) begin
 					dir_com_cyt = 0;
 					
 					dat_esc_init = 0;
 					dat_esc_zero = 1;
+					dir_hora = 0;
+					dat_59 = 0;
 				end else if (contador > 43) begin
 					dir_com_cyt = 0;
 					
 					dat_esc_init = 0;
 					dat_esc_zero = 1;
+					dir_hora = 0;
+					dat_59 = 0;
 				end else begin
 					dir_com_cyt = 0;
 					
 					dat_esc_init = 1;
 					dat_esc_zero = 0;
+					dir_hora = 0;
+					dat_59 = 0;
 				end
 			end else begin
 				buffer_activo = 0;
 				
 				dat_esc_init = 0;
 				dat_esc_zero = 0;
+				dat_59 = 0;
 				
 				dir_com_cyt = 0;
 				dir_st2 = 0;
@@ -410,6 +438,7 @@ module FSM_INIC_RTC(
 			dir_seg_tim = 0;
 			dir_min_tim = 0;
 			dir_hora_tim = 0;
+			dat_59 = 0;
 		end
 	end
 	

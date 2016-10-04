@@ -35,6 +35,7 @@ module FSM_GENERAL(
 	
 	output wire dat_esc_init_g,
 	output wire dat_esc_zero_g,
+	output wire dat_59_g,
 	
 	output wire dir_st2_g,
 	output wire dir_com_cyt_g,
@@ -99,6 +100,7 @@ module FSM_GENERAL(
 		.buffer_activo(buffer_activo_i),
 		.dat_esc_init(dat_esc_init_i),
 		.dat_esc_zero(dat_esc_zero_i),
+		.dat_59(dat_59_g),
 		.dir_st2(dir_st2_i),
 		.dir_com_cyt(dir_com_cyt_i),
 		.dir_seg(dir_seg_i),
