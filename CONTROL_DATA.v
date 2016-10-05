@@ -82,7 +82,7 @@ module CONTROL_DATA(
 		end else if (dir_st2) begin
 			dato_salida = 8'h02;
 		end else if (dir_com_cyt) begin
-			dato_salida = 8'hf1;
+			dato_salida = 8'hf0;
 		end else if (dir_seg) begin
 			dato_salida = 8'h21;
 		end else if (dir_min) begin

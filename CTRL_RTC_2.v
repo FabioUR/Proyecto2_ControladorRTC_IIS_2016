@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 module CTRL_RTC_2(
 	input wire clk,
-	input wire reset,
+	input wire rst,
 	
 	input wire [2:0] switch,
 	
@@ -40,6 +40,8 @@ module CTRL_RTC_2(
 	output wire [2:0] graph_rgb
 	
    );
+	wire reset;
+	assign reset = ~rst;
 	
 	wire [2:0] SW;
 	
