@@ -18,7 +18,7 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module Resta_RTC(
+module RESTA_RTC(
 	input [7:0] hora_in,
 	input [7:0] minuto_in,
 	input [7:0] segundo_in,
