@@ -86,7 +86,7 @@ module FSM_GENERAL(
 	reg do_it_inic;
 	wire a_d_i, cs_i, rd_i, wr_i, ch0_mux1_i, buffer_activo_i;
 	wire dat_esc_init_i,dat_esc_zero_i, dir_st2_i, dir_com_cyt_i, dir_seg_i, dir_min_i, dir_hora_i,
-		dir_dia_i, dir_mes_i, dir_anio_i, dir_seg_tim_i, dir_min_tim_i, dir_hora_tim_i;
+		dir_dia_i, dir_mes_i, dir_anio_i, dir_seg_tim_i, dir_min_tim_i, dir_hora_tim_i, dir_tim_en_i;
 	
 	FSM_INIC_RTC Inicializacion(
 		.clk(clk),
@@ -111,7 +111,8 @@ module FSM_GENERAL(
 		.dir_anio(dir_anio_i),
 		.dir_seg_tim(dir_seg_tim_i),
 		.dir_min_tim(dir_min_tim_i),
-		.dir_hora_tim(dir_hora_tim_i)
+		.dir_hora_tim(dir_hora_tim_i),
+		.dir_tim_en(dir_tim_en_i)
 	);
 	
 	reg do_it_leer;
@@ -168,21 +169,17 @@ module FSM_GENERAL(
 	
 	wire dat_tim_en_e, dat_tim_mask_e;
 	
-	/*reg est_hora_p, est_fecha_p, est_timer_p;
-	reg est_hora_s, est_fecha_s, est_timer_s;*/
-	
 	reg est_hora, est_fecha, est_timer;
+	wire hola = 0;
 	
 	FSM_ESC_RTC Escritura(
 		.clk(clk),
 		.reset(reset),
 		.do_it_esc(do_it_esc_g),
-		/*.estado_hora(est_hora_p),
-		.estado_fecha(est_fecha_p),
-		.estado_timer(est_timer_p),*/
 		.estado_hora(est_hora),
 		.estado_fecha(est_fecha),
 		.estado_timer(est_timer),
+		.stop_t(hola),
 		.a_d(a_d_e),
 		.cs(cs_e),
 		.rd(rd_e),
@@ -287,149 +284,68 @@ module FSM_GENERAL(
 		end
 	end
 	
-	/*always @(posedge clk, posedge reset) begin
-		if (reset) begin
-			est_hora_p <= est_hora_s;
-		end else begin
-			est_hora_p <= est_hora_s;
-		end
-	end
-	
-	always @(posedge clk, posedge reset) begin
-		if (reset) begin
-			est_timer_p <= est_timer_s;
-		end else begin
-			est_timer_p <= est_timer_s;
-		end
-	end
-	
-	always @(posedge clk, posedge reset) begin
-		if (reset) begin
-			est_fecha_p <= est_fecha_s;
-		end else begin
-			est_fecha_p <= est_fecha_s;
-		end
-	end*/
-	
 	/* Lógica Combinacional */
 	
 	always @* begin
 		est_sig = est0;
-		/*est_hora_s = 0;
-		est_fecha_s = 0;
-		est_timer_s = 0;*/
 		case(est_act)
 			est0: begin
-				if (contador == 517) begin // Lo que tarda la inicialización.
+				if (contador == 560) begin // Lo que tarda la inicialización.
 					est_sig = est1;
-					/*est_timer_s = 0;
-					est_fecha_s = 0;
-					est_hora_s = 0;*/
 				end else begin
 					est_sig = est0;
-					/*est_timer_s = 0;
-					est_fecha_s = 0;
-					est_hora_s = 0;*/
 				end
 			end
 			est1: begin
 				if (contador1 == 431) begin // Lo que tarda una lectura completa.
 					est_sig = est2;
-					/*est_timer_s = 0;
-					est_fecha_s = 0;
-					est_hora_s = 0;*/
 				end else begin
 					est_sig = est1;
-					/*est_timer_s = 0;
-					est_fecha_s = 0;
-					est_hora_s = 0;*/
 				end
 			end
 			est2: begin
 				if (S0) begin
 					est_sig = est4;
-					/*est_timer_s = 0;
-					est_fecha_s = 0;
-					est_hora_s = 0;*/
 				end else if (S1) begin
 					est_sig = est3;
-					/*est_timer_s = 0;
-					est_fecha_s = 0;
-					est_hora_s = 0;*/
 				end else if (S2) begin
 					est_sig = est5;
-					/*est_timer_s = 0;
-					est_fecha_s = 0;
-					est_hora_s = 0;*/
 				end else if(contador2 == 1599569) begin // Se espera aprox 16ms  para esperar un pantallazo de la VGA.
 					est_sig = est1;
-					/*est_timer_s = 0;
-					est_fecha_s = 0;
-					est_hora_s = 0;*/
 				end else begin
 					est_sig = est2;
-					/*est_timer_s = 0;
-					est_fecha_s = 0;
-					est_hora_s = 0;*/
 				end
 			end
 			est3: begin
 				if (~S1) begin
 					est_sig = est6;
-					/*est_timer_s = 0;
-					est_fecha_s = 0;
-					est_hora_s = 1;*/
 				end else begin
 					est_sig = est3;
-					/*est_timer_s = 0;
-					est_fecha_s = 0;
-					est_hora_s = 0;*/
 				end
 			end
 			est4: begin
 				if (~S0) begin
 					est_sig = est6;
-					/*est_timer_s = 0;
-					est_fecha_s = 1;
-					est_hora_s = 0;*/
 				end else begin
 					est_sig = est4;
-					/*est_timer_s = 0;
-					est_fecha_s = 0;
-					est_hora_s = 0;*/
 				end
 			end
 			est5: begin
 				if (~S2) begin
 					est_sig = est6;
-					/*est_timer_s = 1;
-					est_fecha_s = 0;
-					est_hora_s = 0;*/
 				end else begin
 					est_sig = est5;
-					/*est_timer_s = 0;
-					est_fecha_s = 0;
-					est_hora_s = 0;*/
 				end
 			end
 			est6: begin
 				if (contador6 == 259) begin
 					est_sig = est1;
-					/*est_hora_s = est_hora_p;
-					est_timer_s = est_timer_p;
-					est_fecha_s = est_fecha_p;*/
 				end else begin
 					est_sig = est6;
-					/*est_hora_s = est_hora_p;
-					est_timer_s = est_timer_p;
-					est_fecha_s = est_fecha_p;*/
 				end
 			end
 			default: begin
 				est_sig = est0;
-				/*est_timer_s = 0;
-				est_fecha_s = 0;
-				est_hora_s = 0;*/
 			end
 		endcase
 	end
@@ -553,7 +469,6 @@ module FSM_GENERAL(
 	assign dir_st2_g = dir_st2_i;
 	assign dir_com_c_g = dir_com_c_e;
 	assign dir_com_t_g = dir_com_t_e;
-	assign dir_tim_en_g = dir_tim_en_e;
 	assign dir_tim_mask_g = dir_tim_mask_e;
 	
 	assign dat_lect_seg_g = dat_lect_seg_l;
@@ -596,6 +511,6 @@ module FSM_GENERAL(
 	assign dir_seg_tim_g = (est_act == 0) ? dir_seg_tim_i : ((est_act == 1) ? dir_seg_tim_l : dir_seg_tim_e);
 	assign dir_min_tim_g = (est_act == 0) ? dir_min_tim_i : ((est_act == 1) ? dir_min_tim_l : dir_min_tim_e);
 	assign dir_hora_tim_g = (est_act == 0) ? dir_hora_tim_i : ((est_act == 1) ? dir_hora_tim_l : dir_hora_tim_e);
+	assign dir_tim_en_g = (est_act == 0) ? dir_tim_en_i : dir_tim_en_e;
 	
 endmodule
-

@@ -26,9 +26,6 @@ module REGISTRO(
 	output reg [7:0] data_out
    );
 	
-	/*always @(posedge clk) begin
-		data_out <= data_in;		
-	end*/
 	always @(posedge clk, posedge reset) begin
       if (reset) begin
          data_out <= 8'b00000000;

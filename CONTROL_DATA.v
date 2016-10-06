@@ -45,36 +45,6 @@ module CONTROL_DATA(
    );
 	
 	always @* begin
-		/*if (dat_esc_init & ~dat_esc_zero & ~dir_st2 &  ~dir_com_cyt & ~dir_seg & ~dir_min & ~dir_hora & ~dir_dia & ~dir_mes & ~dir_anio & ~dir_seg_tim & ~dir_min_tim & ~dir_hora_tim) begin
-			dato_salida = 8'h10;
-		end else if (~dat_esc_init & dat_esc_zero & ~dir_st2 &  ~dir_com_cyt & ~dir_seg & ~dir_min & ~dir_hora & ~dir_dia & ~dir_mes & ~dir_anio & ~dir_seg_tim & ~dir_min_tim & ~dir_hora_tim) begin
-			dato_salida = 8'h00;
-		end else if (~dat_esc_init & ~dat_esc_zero & dir_st2 &  ~dir_com_cyt & ~dir_seg & ~dir_min & ~dir_hora & ~dir_dia & ~dir_mes & ~dir_anio & ~dir_seg_tim & ~dir_min_tim & ~dir_hora_tim) begin
-			dato_salida = 8'h02;
-		end else if (~dat_esc_init & ~dat_esc_zero & ~dir_st2 &  dir_com_cyt & ~dir_seg & ~dir_min & ~dir_hora & ~dir_dia & ~dir_mes & ~dir_anio & ~dir_seg_tim & ~dir_min_tim & ~dir_hora_tim) begin
-			dato_salida = 8'hF0;
-		end else if (~dat_esc_init & ~dat_esc_zero & ~dir_st2 &  ~dir_com_cyt & dir_seg & ~dir_min & ~dir_hora & ~dir_dia & ~dir_mes & ~dir_anio & ~dir_seg_tim & ~dir_min_tim & ~dir_hora_tim) begin
-			dato_salida = 8'h21;
-		end else if (~dat_esc_init & ~dat_esc_zero & ~dir_st2 &  ~dir_com_cyt & ~dir_seg & dir_min & ~dir_hora & ~dir_dia & ~dir_mes & ~dir_anio & ~dir_seg_tim & ~dir_min_tim & ~dir_hora_tim) begin
-			dato_salida = 8'h22;
-		end else if (~dat_esc_init & ~dat_esc_zero & ~dir_st2 &  ~dir_com_cyt & ~dir_seg & ~dir_min & dir_hora & ~dir_dia & ~dir_mes & ~dir_anio & ~dir_seg_tim & ~dir_min_tim & ~dir_hora_tim) begin
-			dato_salida = 8'h23;
-		end else if (~dat_esc_init & ~dat_esc_zero & ~dir_st2 &  ~dir_com_cyt & ~dir_seg & ~dir_min & ~dir_hora & dir_dia & ~dir_mes & ~dir_anio & ~dir_seg_tim & ~dir_min_tim & ~dir_hora_tim) begin
-			dato_salida = 8'h24;
-		end else if (~dat_esc_init & ~dat_esc_zero & ~dir_st2 &  ~dir_com_cyt & ~dir_seg & ~dir_min & ~dir_hora & ~dir_dia & dir_mes & ~dir_anio & ~dir_seg_tim & ~dir_min_tim & ~dir_hora_tim) begin
-			dato_salida = 8'h25;
-		end else if (~dat_esc_init & ~dat_esc_zero & ~dir_st2 &  ~dir_com_cyt & ~dir_seg & ~dir_min & ~dir_hora & ~dir_dia & ~dir_mes & dir_anio & ~dir_seg_tim & ~dir_min_tim & ~dir_hora_tim) begin
-			dato_salida = 8'h26;
-		end else if (~dat_esc_init & ~dat_esc_zero & ~dir_st2 &  ~dir_com_cyt & ~dir_seg & ~dir_min & ~dir_hora & ~dir_dia & ~dir_mes & ~dir_anio & dir_seg_tim & ~dir_min_tim & ~dir_hora_tim) begin
-			dato_salida = 8'h41;
-		end else if (~dat_esc_init & ~dat_esc_zero & ~dir_st2 &  ~dir_com_cyt & ~dir_seg & ~dir_min & ~dir_hora & ~dir_dia & ~dir_mes & ~dir_anio & ~dir_seg_tim & dir_min_tim & ~dir_hora_tim) begin
-			dato_salida = 8'h42;
-		end else if (~dat_esc_init & ~dat_esc_zero & ~dir_st2 &  ~dir_com_cyt & ~dir_seg & ~dir_min & ~dir_hora & ~dir_dia & ~dir_mes & ~dir_anio & ~dir_seg_tim & ~dir_min_tim & dir_hora_tim) begin
-			dato_salida = 8'h43;
-		end else begin
-			dato_salida = 8'hff;
-		end*/
-		
 		if (dat_esc_init) begin
 			dato_salida = 8'h10;
 		end else if (dat_esc_zero) begin

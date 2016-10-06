@@ -25,6 +25,7 @@ module FSM_ESC_RTC(
 	input wire estado_hora,
 	input wire estado_fecha,
 	input wire estado_timer,
+	input wire stop_t,
 	
 	output wire a_d, cs, rd, wr, // Señales de ctrl RTC.
 	
@@ -202,20 +203,27 @@ module FSM_ESC_RTC(
 					dir_seg_tim = 0;
 					dir_min_tim = 0;
 					dir_hora_tim = 0;
-					dir_tim_mask = 0;
 					dir_com_t = 0;
 					if (estado_hora) begin
 						dir_com_c = 1;
 						dir_tim_en = 0;
+						dir_tim_mask = 0;
 					end else if (estado_fecha) begin
 						dir_com_c = 1;
 						dir_tim_en = 0;
+						dir_tim_mask = 0;
 					end else if (estado_timer) begin
 						dir_com_c = 0;
 						dir_tim_en = 1;
+						dir_tim_mask = 0;
+					end else if (stop_t) begin
+						dir_com_c = 0;
+						dir_tim_en = 0;
+						dir_tim_mask = 1;
 					end else begin
 						dir_com_c = 0;
 						dir_tim_en = 0;
+						dir_tim_mask = 0;
 					end
 				end else if (contador > 172) begin
 					dir_seg = 0;
@@ -227,20 +235,27 @@ module FSM_ESC_RTC(
 					dir_seg_tim = 0;
 					dir_min_tim = 0;
 					dir_hora_tim = 0;
-					dir_tim_mask = 0;
 					dir_tim_en = 0;
 					if (estado_hora) begin
 						dir_com_c = 1;
 						dir_com_t = 0;
+						dir_tim_mask = 0;
 					end else if (estado_fecha) begin
 						dir_com_c = 1;
 						dir_com_t = 0;
+						dir_tim_mask = 0;
 					end else if (estado_timer) begin
 						dir_com_c = 0;
 						dir_com_t = 1;
+						dir_tim_mask = 0;
+					end else if (stop_t) begin
+						dir_com_c = 0;
+						dir_com_t = 0;
+						dir_tim_mask = 1;
 					end else begin
 						dir_com_c = 0;
 						dir_com_t = 0;
+						dir_tim_mask = 0;
 					end
 				end else if (contador > 129) begin
 					dir_seg = 0;
@@ -263,12 +278,14 @@ module FSM_ESC_RTC(
 					end else if (estado_timer) begin
 						dir_com_c = 0;
 						dir_tim_mask = 1;
+					end else if (stop_t) begin
+						dir_com_c = 0;
+						dir_tim_mask = 1;
 					end else begin
 						dir_com_c = 0;
 						dir_tim_mask = 0;
 					end
 				end else if (contador > 86) begin
-					dir_tim_mask = 0;
 					dir_com_c = 0;
 					dir_com_t = 0;
 					dir_tim_en = 0;
@@ -282,6 +299,7 @@ module FSM_ESC_RTC(
 						dir_seg_tim = 0;
 						dir_min_tim = 0;
 						dir_hora_tim = 0;
+						dir_tim_mask = 0;
 					end else if (estado_fecha) begin
 						dir_seg = 0;
 						dir_min = 0;
@@ -292,6 +310,7 @@ module FSM_ESC_RTC(
 						dir_seg_tim = 0;
 						dir_min_tim = 0;
 						dir_hora_tim = 0;
+						dir_tim_mask = 0;
 					end else if (estado_timer) begin
 						dir_seg = 0;
 						dir_min = 0;
@@ -302,6 +321,18 @@ module FSM_ESC_RTC(
 						dir_seg_tim = 0;
 						dir_min_tim = 0;
 						dir_hora_tim = 1;
+						dir_tim_mask = 0;
+					end else if (stop_t) begin
+						dir_seg = 0;
+						dir_min = 0;
+						dir_hora = 0;
+						dir_dia = 0;
+						dir_mes = 0;
+						dir_anio = 0;
+						dir_seg_tim = 0;
+						dir_min_tim = 0;
+						dir_hora_tim = 0;
+						dir_tim_mask = 1;
 					end else begin
 						dir_seg = 0;
 						dir_min = 0;
@@ -312,9 +343,9 @@ module FSM_ESC_RTC(
 						dir_seg_tim = 0;
 						dir_min_tim = 0;
 						dir_hora_tim = 0;
+						dir_tim_mask = 0;
 					end
 				end else if (contador > 43) begin
-					dir_tim_mask = 0;
 					dir_com_c = 0;
 					dir_com_t = 0;
 					dir_tim_en = 0;
@@ -328,6 +359,7 @@ module FSM_ESC_RTC(
 						dir_seg_tim = 0;
 						dir_min_tim = 0;
 						dir_hora_tim = 0;
+						dir_tim_mask = 0;
 					end else if (estado_fecha) begin
 						dir_seg = 0;
 						dir_min = 0;
@@ -338,6 +370,7 @@ module FSM_ESC_RTC(
 						dir_seg_tim = 0;
 						dir_min_tim = 0;
 						dir_hora_tim = 0;
+						dir_tim_mask = 0;
 					end else if (estado_timer) begin
 						dir_seg = 0;
 						dir_min = 0;
@@ -348,6 +381,18 @@ module FSM_ESC_RTC(
 						dir_seg_tim = 0;
 						dir_min_tim = 1;
 						dir_hora_tim = 0;
+						dir_tim_mask = 0;
+					end else if (stop_t) begin
+						dir_seg = 0;
+						dir_min = 0;
+						dir_hora = 0;
+						dir_dia = 0;
+						dir_mes = 0;
+						dir_anio = 0;
+						dir_seg_tim = 0;
+						dir_min_tim = 0;
+						dir_hora_tim = 0;
+						dir_tim_mask = 1;
 					end else begin
 						dir_seg = 0;
 						dir_min = 0;
@@ -358,11 +403,11 @@ module FSM_ESC_RTC(
 						dir_seg_tim = 0;
 						dir_min_tim = 0;
 						dir_hora_tim = 0;
+						dir_tim_mask = 0;
 					end
 				end else begin
 					dir_com_c = 0;
 					dir_com_t = 0;
-					dir_tim_mask = 0;
 					dir_tim_en = 0;
 					if (estado_hora) begin
 						dir_seg = 1;
@@ -374,6 +419,7 @@ module FSM_ESC_RTC(
 						dir_seg_tim = 0;
 						dir_min_tim = 0;
 						dir_hora_tim = 0;
+						dir_tim_mask = 0;
 					end else if (estado_fecha) begin
 						dir_seg = 0;
 						dir_min = 0;
@@ -384,7 +430,8 @@ module FSM_ESC_RTC(
 						dir_seg_tim = 0;
 						dir_min_tim = 0;
 						dir_hora_tim = 0;
-					end else begin if (estado_timer) begin
+						dir_tim_mask = 0;
+					end else if (estado_timer) begin
 						dir_seg = 0;
 						dir_min = 0;
 						dir_hora = 0;
@@ -394,6 +441,18 @@ module FSM_ESC_RTC(
 						dir_seg_tim = 1;
 						dir_min_tim = 0;
 						dir_hora_tim = 0;
+						dir_tim_mask = 0;
+					end else if (stop_t) begin
+						dir_seg = 0;
+						dir_min = 0;
+						dir_hora = 0;
+						dir_dia = 0;
+						dir_mes = 0;
+						dir_anio = 0;
+						dir_seg_tim = 0;
+						dir_min_tim = 0;
+						dir_hora_tim = 0;
+						dir_tim_mask = 1;
 					end else begin
 						dir_seg = 0;
 						dir_min = 0;
@@ -404,9 +463,10 @@ module FSM_ESC_RTC(
 						dir_seg_tim = 0;
 						dir_min_tim = 0;
 						dir_hora_tim = 0;
+						dir_tim_mask = 0;
 					end
 				end
-			end
+			//end
 			end else if (send_data && (~send_add) && (~read_data)) begin
 				buffer_activo = 1;
 				
@@ -419,7 +479,6 @@ module FSM_ESC_RTC(
 				dir_seg_tim = 0;
 				dir_min_tim = 0;
 				dir_hora_tim = 0;
-				dir_tim_mask = 0;
 				dir_tim_en = 0;
 				if (contador > 215) begin
 					ch0_mux1 = 1;
@@ -439,15 +498,23 @@ module FSM_ESC_RTC(
 					if (estado_hora) begin
 						dir_com_c = 1;
 						dat_tim_en = 0;
+						dir_tim_mask = 0;
 					end else if (estado_fecha) begin
 						dir_com_c = 1;
 						dat_tim_en = 0;
+						dir_tim_mask = 0;
 					end else if (estado_timer) begin
 						dat_tim_en = 1;
 						dir_com_c = 0;
+						dir_tim_mask = 0;
+					end else if (stop_t) begin
+						dat_tim_en = 0;
+						dir_com_c = 0;
+						dir_tim_mask = 1;
 					end else begin
 						dat_tim_en = 0;
 						dir_com_c = 0;
+						dir_tim_mask = 0;
 					end
 				end else if (contador > 172) begin
 					ch0_mux1 = 1;
@@ -467,15 +534,23 @@ module FSM_ESC_RTC(
 					if (estado_hora) begin
 						dir_com_t = 0;
 						dir_com_c = 1;
+						dir_tim_mask = 0;
 					end else if (estado_fecha) begin
 						dir_com_t = 0;
 						dir_com_c = 1;
+						dir_tim_mask = 0;
 					end else if (estado_timer) begin
 						dir_com_t = 1;
 						dir_com_c = 0;
+						dir_tim_mask = 0;
+					end else if (stop_t) begin
+						dir_com_t = 0;
+						dir_com_c = 0;
+						dir_tim_mask = 1;
 					end else begin
 						dir_com_t = 0;
 						dir_com_c = 0;
+						dir_tim_mask = 0;
 					end
 				end else if (contador > 129) begin
 					ch0_mux1 = 1;
@@ -495,15 +570,23 @@ module FSM_ESC_RTC(
 					if (estado_hora) begin
 						dat_tim_mask = 0;
 						dir_com_c = 1;
+						dir_tim_mask = 0;
 					end else if (estado_fecha) begin
 						dat_tim_mask = 0;
 						dir_com_c = 1;
+						dir_tim_mask = 0;
 					end else if (estado_timer) begin
 						dat_tim_mask = 1;
 						dir_com_c = 0;
+						dir_tim_mask = 0;
+					end else if (stop_t) begin
+						dat_tim_mask = 0;
+						dir_com_c = 0;
+						dir_tim_mask = 1;
 					end else begin
 						dat_tim_mask = 0;
 						dir_com_c = 0;
+						dir_tim_mask = 0;
 					end
 				end else if (contador > 86) begin
 					
@@ -524,6 +607,7 @@ module FSM_ESC_RTC(
 						dat_esc_seg_tim = 0;
 						dat_esc_min_tim = 0;
 						dat_esc_hora_tim = 0;
+						dir_tim_mask = 0;
 					end else if (estado_fecha) begin
 						dat_esc_seg = 0;
 						dat_esc_min = 0;
@@ -534,6 +618,7 @@ module FSM_ESC_RTC(
 						dat_esc_seg_tim = 0;
 						dat_esc_min_tim = 0;
 						dat_esc_hora_tim = 0;
+						dir_tim_mask = 0;
 					end else if (estado_timer) begin
 						dat_esc_seg = 0;
 						dat_esc_min = 0;
@@ -544,6 +629,18 @@ module FSM_ESC_RTC(
 						dat_esc_seg_tim = 0;
 						dat_esc_min_tim = 0;
 						dat_esc_hora_tim = 1;
+						dir_tim_mask = 0;
+					end else if (stop_t) begin
+						dat_esc_seg = 0;
+						dat_esc_min = 0;
+						dat_esc_hora = 0;
+						dat_esc_dia = 0;
+						dat_esc_mes = 0;
+						dat_esc_anio = 0;
+						dat_esc_seg_tim = 0;
+						dat_esc_min_tim = 0;
+						dat_esc_hora_tim = 0;
+						dir_tim_mask = 1;
 					end else begin
 						dat_esc_seg = 0;
 						dat_esc_min = 0;
@@ -554,6 +651,7 @@ module FSM_ESC_RTC(
 						dat_esc_seg_tim = 0;
 						dat_esc_min_tim = 0;
 						dat_esc_hora_tim = 0;
+						dir_tim_mask = 0;
 					end
 				end else if (contador > 43) begin
 					
@@ -573,6 +671,7 @@ module FSM_ESC_RTC(
 						dat_esc_seg_tim = 0;
 						dat_esc_min_tim = 0;
 						dat_esc_hora_tim = 0;
+						dir_tim_mask = 0;
 					end else if (estado_fecha) begin
 						dat_esc_seg = 0;
 						dat_esc_min = 0;
@@ -583,6 +682,7 @@ module FSM_ESC_RTC(
 						dat_esc_seg_tim = 0;
 						dat_esc_min_tim = 0;
 						dat_esc_hora_tim = 0;
+						dir_tim_mask = 0;
 					end else if (estado_timer) begin
 						dat_esc_seg = 0;
 						dat_esc_min = 0;
@@ -593,6 +693,18 @@ module FSM_ESC_RTC(
 						dat_esc_seg_tim = 0;
 						dat_esc_min_tim = 1;
 						dat_esc_hora_tim = 0;
+						dir_tim_mask = 0;
+					end else if (stop_t) begin
+						dat_esc_seg = 0;
+						dat_esc_min = 0;
+						dat_esc_hora = 0;
+						dat_esc_dia = 0;
+						dat_esc_mes = 0;
+						dat_esc_anio = 0;
+						dat_esc_seg_tim = 0;
+						dat_esc_min_tim = 0;
+						dat_esc_hora_tim = 0;
+						dir_tim_mask = 1;
 					end else begin
 						dat_esc_seg = 0;
 						dat_esc_min = 0;
@@ -603,6 +715,7 @@ module FSM_ESC_RTC(
 						dat_esc_seg_tim = 0;
 						dat_esc_min_tim = 0;
 						dat_esc_hora_tim = 0;
+						dir_tim_mask = 0;
 					end
 				end else begin
 									
@@ -622,6 +735,7 @@ module FSM_ESC_RTC(
 						dat_esc_seg_tim = 0;
 						dat_esc_min_tim = 0;
 						dat_esc_hora_tim = 0;
+						dir_tim_mask = 0;
 					end else if (estado_fecha) begin
 						dat_esc_seg = 0;
 						dat_esc_min = 0;
@@ -632,6 +746,7 @@ module FSM_ESC_RTC(
 						dat_esc_seg_tim = 0;
 						dat_esc_min_tim = 0;
 						dat_esc_hora_tim = 0;
+						dir_tim_mask = 0;
 					end else if (estado_timer) begin
 						dat_esc_seg = 0;
 						dat_esc_min = 0;
@@ -642,6 +757,18 @@ module FSM_ESC_RTC(
 						dat_esc_seg_tim = 1;
 						dat_esc_min_tim = 0;
 						dat_esc_hora_tim = 0;
+						dir_tim_mask = 0;
+					end else if (stop_t) begin
+						dat_esc_seg = 0;
+						dat_esc_min = 0;
+						dat_esc_hora = 0;
+						dat_esc_dia = 0;
+						dat_esc_mes = 0;
+						dat_esc_anio = 0;
+						dat_esc_seg_tim = 0;
+						dat_esc_min_tim = 0;
+						dat_esc_hora_tim = 0;
+						dir_tim_mask = 1;
 					end else begin
 						dat_esc_seg = 0;
 						dat_esc_min = 0;
@@ -652,6 +779,7 @@ module FSM_ESC_RTC(
 						dat_esc_seg_tim = 0;
 						dat_esc_min_tim = 0;
 						dat_esc_hora_tim = 0;
+						dir_tim_mask = 0;
 					end
 				end
 			end else begin

@@ -39,7 +39,7 @@ module CONT_DATO_31(
 			end else if (~en) begin
 				dat <= dat + 5'b00000;
 			end else if (aum) begin
-				if (dat == 5'b11111) begin //59.
+				if (dat == 5'b11111) begin //31.
 					dat <= 5'b00000; 
 				end else begin
 					dat <= dat + 5'b00001;

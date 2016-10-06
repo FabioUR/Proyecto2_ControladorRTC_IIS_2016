@@ -37,7 +37,7 @@ module CONT_DATO_99(
 			end else if (~en) begin
 				dat_sal <= dat_sal + 7'b0000000;
 			end else if (aum) begin
-				if (dat_sal == 7'b1100011) begin //59.
+				if (dat_sal == 7'b1100011) begin //99.
 					dat_sal <= 6'b0000000; 
 				end else begin
 					dat_sal <= dat_sal + 7'b0000001;

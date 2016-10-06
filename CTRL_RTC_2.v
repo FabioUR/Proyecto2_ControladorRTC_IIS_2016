@@ -30,7 +30,6 @@ module CTRL_RTC_2(
 	input wire bot_left,
 	
 	input wire alarma,
-	//input wire [7:0] cursor,
 	
 	inout wire [7:0] AD,
 	
@@ -263,8 +262,6 @@ module CTRL_RTC_2(
 	
 	/* Registros de programación */
 	
-	//wire [7:0] datos_prog = 8'h77;////////Desconectada
-	
 	wire [7:0] dat_prog_seg, dat_prog_min, dat_prog_hora, dat_prog_dia, dat_prog_mes, dat_prog_anio,
 		dat_prog_seg_tim, dat_prog_min_tim, dat_prog_hora_tim;
 		
@@ -272,7 +269,6 @@ module CTRL_RTC_2(
 		.clk(clk),
 		.reset(reset),
 		.data_in(dato_prog_seg),
-		//.data_in(datos_prog),
 		.data_out(dat_prog_seg)
 	);
 	
@@ -280,7 +276,6 @@ module CTRL_RTC_2(
 		.clk(clk),
 		.reset(reset),
 		.data_in(dato_prog_min),
-		//.data_in(datos_prog),
 		.data_out(dat_prog_min)
 	);
 	
@@ -288,7 +283,6 @@ module CTRL_RTC_2(
 		.clk(clk),
 		.reset(reset),
 		.data_in(dato_prog_hora),
-		//.data_in(datos_prog),
 		.data_out(dat_prog_hora)
 	);
 	
@@ -296,7 +290,6 @@ module CTRL_RTC_2(
 		.clk(clk),
 		.reset(reset),
 		.data_in(dato_prog_dia),
-		//.data_in(datos_prog),
 		.data_out(dat_prog_dia)
 	);
 	
@@ -304,7 +297,6 @@ module CTRL_RTC_2(
 		.clk(clk),
 		.reset(reset),
 		.data_in(dato_prog_mes),
-		//.data_in(datos_prog),
 		.data_out(dat_prog_mes)
 	);
 	
@@ -312,7 +304,6 @@ module CTRL_RTC_2(
 		.clk(clk),
 		.reset(reset),
 		.data_in(dato_prog_anio),
-		//.data_in(datos_prog),
 		.data_out(dat_prog_anio)
 	);
 	
@@ -320,7 +311,6 @@ module CTRL_RTC_2(
 		.clk(clk),
 		.reset(reset),
 		.data_in(dato_prog_seg_t),
-		//.data_in(datos_prog),
 		.data_out(dat_prog_seg_tim)
 	);
 	
@@ -328,7 +318,6 @@ module CTRL_RTC_2(
 		.clk(clk),
 		.reset(reset),
 		.data_in(dato_prog_min_t),
-		//.data_in(datos_prog),
 		.data_out(dat_prog_min_tim)
 	);
 	
@@ -336,13 +325,12 @@ module CTRL_RTC_2(
 		.clk(clk),
 		.reset(reset),
 		.data_in(dato_prog_hora_t),
-		//.data_in(datos_prog),
 		.data_out(dat_prog_hora_tim)
 	);
 	
 	wire [7:0] hora_mux3, min_mux3, seg_mux3;
 	
-	Resta_RTC Resta(
+	RESTA_RTC Resta(
 		.hora_in(dat_prog_hora_tim),
 		.minuto_in(dat_prog_min_tim),
 		.segundo_in(dat_prog_seg_tim),
@@ -376,9 +364,6 @@ module CTRL_RTC_2(
 		.y3(dato_mux_prog)
 	);
 	
-	
-	
-	//wire [7:0] ch1_m1 = 8'h77;
 	wire [7:0] dato_mux_esc;
 	
 	mux1 mux1(
@@ -392,8 +377,6 @@ module CTRL_RTC_2(
 	wire [7:0] dato_rtc_lect;
 	
 	BUFFER_TRIESTADO Buffer(
-		//.clk(clk),
-		//.reset(reset),
 		.AD(AD),
 		.sig_out(dato_mux_esc),
 		.sig_in(dato_rtc_lect),
@@ -425,10 +408,6 @@ module CTRL_RTC_2(
 		.sal_min_tim(min_t_l), 
 		.sal_hora_tim(hora_t_l)
 	);
-	
-	//wire [7:0] seg_p, min_p, hora_p, dia_p, mes_p, anio_p, seg_t_p, min_t_p, hora_t_p;
-	//wire ch0_mux2l = 0;
-	//wire [7:0] datisho = 8'h99;
 	
 	wire [7:0] seg, min, hora, dia, mes, anio, seg_t, min_t, hora_t;
 
@@ -506,7 +485,7 @@ module CTRL_RTC_2(
 		.y2(hora_t)
 	);
 	
-	Resta_RTC RestaVGA(
+	RESTA_RTC RestaVGA(
 		.hora_in(hora_t_l),
 		.minuto_in(min_t_l),
 		.segundo_in(seg_t_l),
@@ -536,15 +515,6 @@ module CTRL_RTC_2(
 		.pix_y(p_y),
 		.Alarma_on(alarma2),
 		.bandera_cursor(banderas_dir),
-		/*.digit_DD(dato_rtc_lect),
-		.digit_M(dato_rtc_lect),
-		.digit_AN(dato_rtc_lect),
-		.digit_HORA(dato_rtc_lect),
-		.digit_MIN(dato_rtc_lect),
-		.digit_SEG(dato_rtc_lect),
-		.digit_TimerHORA(dato_rtc_lect),
-		.digit_TimerMIN(dato_rtc_lect),
-		.digit_TimerSEG(dato_rtc_lect),*/
 		.digit_DD(dia),
 		.digit_M(mes),
 		.digit_AN(anio),
