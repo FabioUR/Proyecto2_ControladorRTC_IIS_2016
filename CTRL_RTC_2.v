@@ -23,6 +23,7 @@ module CTRL_RTC_2(
 	input wire rst,
 	
 	input wire [2:0] switch,
+	input wire p_timer,
 	
 	input wire bot_up,
 	input wire bot_down,
@@ -85,6 +86,15 @@ module CTRL_RTC_2(
 		.salida(izquierda)
 	);
 	
+	wire parar_timer;
+	
+	ANTIREBOTE center(
+		.clk(clk),
+		.reset(reset),
+		.entrada(p_timer),
+		.salida(parar_timer)
+	);
+	
 	wire en_dir = en_contadores_hora | en_contadores_fecha | en_contadores_timer;
 	wire [1:0] direccion;
 	
@@ -101,6 +111,8 @@ module CTRL_RTC_2(
 	wire en_contadores_fecha;
 	wire en_contadores_timer;
 	
+	wire most_cur;
+
 	wire en_seg_g, en_min_g, en_hora_g, en_dia_g, en_mes_g, en_anio_g, en_seg_t_g, en_min_t_g, en_hora_t_g;
 	// Se unen porque el el VGA las recibe en un byte.
 	wire [8:0] banderas_dir = {en_dia_g, en_mes_g, en_anio_g, en_hora_g, en_min_g, en_seg_g, en_hora_t_g, en_min_t_g, en_seg_t_g};
@@ -110,6 +122,7 @@ module CTRL_RTC_2(
 		.en_cont_hora(en_contadores_hora),
 		.en_cont_fecha(en_contadores_fecha),
 		.en_cont_timer(en_contadores_timer),
+		.cursor(most_cur),
 		.en_seg(en_seg_g),
 		.en_min(en_min_g),
 		.en_hora(en_hora_g),
@@ -165,7 +178,7 @@ module CTRL_RTC_2(
 		dat_esc_anio, dat_esc_seg_tim, dat_esc_min_tim, dat_esc_hora_tim,
 		dat_tim_en, dat_tim_mask;
 	
-	
+	wire alarma2 = ~alarma;
 	
 	FSM_GENERAL MaqGen(
 		.clk(clk),
@@ -182,6 +195,7 @@ module CTRL_RTC_2(
 		.buffer_activo_g(buf_act),
 		.ch0_mux2_g(ch0_mux2),
 		.ch1_mux2_g(ch1_mux2),
+		.s_stop_t(parar_timer),
 		.en_contadores_hora_g(en_contadores_hora),
 		.en_contadores_fecha_g(en_contadores_fecha),
 		.en_contadores_timer_g(en_contadores_timer),
@@ -222,7 +236,8 @@ module CTRL_RTC_2(
 		.dir_tim_en_g(dir_tim_en),
 		.dir_tim_mask_g(dir_tim_mask),
 		.dat_tim_en_g(dat_tim_en),
-		.dat_tim_mask_g(dat_tim_mask)
+		.dat_tim_mask_g(dat_tim_mask),
+		.most_cur_g(most_cur)
 	);
 	
 	wire [7:0] dato_ctrl_data;
@@ -506,8 +521,6 @@ module CTRL_RTC_2(
 		.pixel_X(p_x),
 		.pixel_Y(p_y)
 	);
-	
-	wire alarma2 = ~alarma;
 	
 	Generador_Letras GenVGA(
 		.CLK(p_t),
